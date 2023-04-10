@@ -59,8 +59,6 @@
 	class="
 		m-6 sm:m-8 md:m-12
 		space-y-9 sm:space-y-12
-		border-r border-black
-		bg-gradient-to-r from-indigo-500
 	"
 >
 	<div
@@ -110,7 +108,7 @@
 				<h1 class="uppercase font-medium text-3xl font-mono">
 					{category}
 				</h1>
-				<div class="border-b border-black my-3" />
+				<!-- <div class="border-b border-black my-3" /> -->
 				{#each products as product}
 					<div class="my-4">
 						<div class="flex space-x-3 pr-0.5">
@@ -121,17 +119,17 @@
 								{product.name}
 							</div>
 							{#if product.glass !== ''}
-								<div class="basis-[10%] font-serif text-lg text-right">
+								<div class="w-[32px] font-serif text-lg text-right">
 									{product.glass < 0 ? '' : (product.glass / 10000).toFixed(1)}
 								</div>
 							{/if}
 							{#if product.bottle !== ''}
-								<div class="basis-[10%] font-serif text-lg text-right">
+								<div class="w-[32px] font-serif text-lg text-right">
 									{product.bottle < 0 ? '' : (product.bottle / 10000).toFixed(1)}
 								</div>
 							{/if}
 							{#if product.price !== ''}
-								<div class="basis-[10%] font-serif text-lg text-right">
+								<div class="w-[32px] font-serif text-lg text-right">
 									{product.price < 0 ? '' : (product.price / 10000).toFixed(1)}
 								</div>
 							{/if}
