@@ -9,6 +9,7 @@
 		bottle: number;
 		price: number;
 		description: string;
+		out: boolean;
 	};
 
 	/**
@@ -48,6 +49,7 @@
 			else if (v.type === 'select') acc[k] = v.select?.name || '';
 			else if (v.type === 'title') acc[k] = v.title[0]?.text?.content || '';
 			else if (v.type === 'rich_text') acc[k] = v.rich_text[0]?.text?.content || '';
+			else if (v.type === 'checkbox') acc[k] = v.checkbox;
 			else acc[k] = '';
 			return acc;
 		}, {});
@@ -74,7 +76,10 @@
 				<div
 					class="
 						font-black
-						text-4xl
+					"
+					style="
+						font-size: 6.25rem;
+						line-height: 4.5rem;
 					"
 				>
 					{title.name}
@@ -83,7 +88,7 @@
 		</div>
 		<div class="self-center">
 			{#each headers as header}
-				<div class="font-mono">
+				<div class="text-2xl">
 					{header.name}
 				</div>
 			{/each}
@@ -100,27 +105,36 @@
 	>
 		{#each Object.entries(groups) as [category, products]}
 			<div class="border border-black p-5">
-				<h1 class="uppercase text-2xl font-sans">
+				<h1 class="uppercase font-medium text-3xl font-sans">
 					{category}
 				</h1>
 				<div class="border-b border-black my-3" />
 				{#each products as product}
 					<div class="my-4">
-						<div class="flex space-x-3">
-							<div class="flex-grow text-lg uppercase">
+						<div class="flex space-x-3 pr-0.5">
+							<div
+								class="basis-auto flex-grow text-xl uppercase decoration-slice"
+								class:line-through={product.out}
+							>
 								{product.name}
 							</div>
-							<div class="font-serif">
-								{Number(product.glass) === 0 ? '' : (product.glass / 10000).toFixed(1)}
-							</div>
-							<div class="font-serif">
-								{Number(product.bottle) === 0 ? '' : (product.bottle / 10000).toFixed(1)}
-							</div>
-							<div class="font-serif">
-								{Number(product.price) === 0 ? '' : (product.price / 10000).toFixed(1)}
-							</div>
+							{#if product.glass !== ''}
+								<div class="basis-[10%] font-serif text-lg text-right">
+									{product.glass < 0 ? '' : (product.glass / 10000).toFixed(1)}
+								</div>
+							{/if}
+							{#if product.bottle !== ''}
+								<div class="basis-[10%] font-serif text-lg text-right">
+									{product.bottle < 0 ? '' : (product.bottle / 10000).toFixed(1)}
+								</div>
+							{/if}
+							{#if product.price !== ''}
+								<div class="basis-[10%] font-serif text-lg text-right">
+									{product.price < 0 ? '' : (product.price / 10000).toFixed(1)}
+								</div>
+							{/if}
 						</div>
-						<div class="text-xs">
+						<div class="text-sm">
 							{product.description}
 						</div>
 					</div>
