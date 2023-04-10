@@ -53,56 +53,71 @@
 		}, {});
 </script>
 
-<div>
+<div
+	class="
+		m-6 sm:m-8 md:m-12
+		space-y-9 sm:space-y-12
+	"
+>
 	<div
+		id="top"
 		class="
-			flex gap-1.5 p-3 m-3
+			grid
+			grid-cols-1
+			gap-y-6
+			gap-x-9 lg:gap-x-24
+			p-1
 		"
 	>
-		<div class="flex-1 self-center">
+		<div class="self-center">
 			{#each titles as title}
-				<div>
-					<div class="flex gap-3 font-extrabold text-4xl">
-						<div>
-							{title.name}
-						</div>
-					</div>
+				<div
+					class="
+						font-black
+						font-
+						text-4xl
+					"
+				>
+					{title.name}
 				</div>
 			{/each}
 		</div>
-		<div class="flex-1 self-center">
+		<div class="self-center">
 			{#each headers as header}
-				<div>
-					<div class="flex gap-3">
-						<div>
-							{header.name}
-						</div>
-					</div>
+				<div class="font-mono">
+					{header.name}
 				</div>
 			{/each}
 		</div>
 	</div>
 
-	<div class="flex-row gap-3 m-3">
+	<div
+		class="
+			grid
+			grid-cols-1 sm:grid-cols-2
+			gap-y-9
+			gap-x-9 lg:gap-x-24
+		"
+	>
 		{#each Object.entries(groups) as [category, products]}
-			<div class="flex-auto border-1 p-3 my-3">
-				<h1 class="uppercase text-2xl">
+			<div class="border border-black p-5">
+				<h1 class="uppercase text-2xl font-sans">
 					{category}
 				</h1>
-				<div class="border-b-2 my-3" />
+				<div class="border-b border-black my-3" />
 				{#each products as product}
-					<div class="my-2">
-						<div class="flex gap-3">
-							<div class="flex-grow text-lg">
+					<div class="my-4">
+						<div class="flex space-x-3">
+							<div class="flex-grow text-lg uppercase font-mono">
 								{product.name}
 							</div>
-							<div>
+							<div class="font-serif">
 								{Number(product.glass) === 0 ? '' : (product.glass / 10000).toFixed(1)}
 							</div>
-							<div>
+							<div class="font-serif">
 								{Number(product.bottle) === 0 ? '' : (product.bottle / 10000).toFixed(1)}
 							</div>
-							<div>
+							<div class="font-serif">
 								{Number(product.price) === 0 ? '' : (product.price / 10000).toFixed(1)}
 							</div>
 						</div>
@@ -115,14 +130,10 @@
 		{/each}
 	</div>
 
-	<div>
+	<div class="flex justify-end">
 		{#each footers as footer}
-			<div>
-				<div class="flex gap-3">
-					<div>
-						{footer.name}
-					</div>
-				</div>
+			<div class="font-mono">
+				{footer.name}
 			</div>
 		{/each}
 	</div>
