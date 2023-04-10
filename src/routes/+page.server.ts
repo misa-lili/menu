@@ -9,7 +9,15 @@ export async function load() {
 			'Notion-Version': '2022-06-28',
 			accept: 'application/json',
 			'content-type': 'application/json'
-		}
+		},
+		body: JSON.stringify({
+				sorts: [
+						{
+								property: "order",
+								direction: "ascending"
+						}
+				]
+		})
 	})
 		.then((response) => response.json())
 		.catch((err) => console.error(err));

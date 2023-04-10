@@ -2,8 +2,12 @@
 	import '../app.css';
 </script>
 
-<div class="w-screen h-screen bg-zinc-800">
-	<div class="container mx-auto p-3 bg-zinc-700 text-zinc-200 font-serif">
-		<slot />
-	</div>
+<div
+	class="
+		container mx-auto border-red-500
+		sm:px-1 sm:py-3
+		md:px-12 md:py-6
+	"
+>
+	<slot />
 </div>
