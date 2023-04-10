@@ -74,7 +74,6 @@
 				<div
 					class="
 						font-black
-						font-
 						text-4xl
 					"
 				>
@@ -108,7 +107,7 @@
 				{#each products as product}
 					<div class="my-4">
 						<div class="flex space-x-3">
-							<div class="flex-grow text-lg uppercase font-mono">
+							<div class="flex-grow text-lg uppercase">
 								{product.name}
 							</div>
 							<div class="font-serif">
