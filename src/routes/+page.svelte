@@ -19,21 +19,23 @@
 	);
 </script>
 
-{#each items as item}
-	<div>
-		<div class="flex gap-3">
-			<div>
-				{item.name}
-			</div>
-			<div>
-				{item.glass}
-			</div>
-			<div>
-				{item.bottle}
-			</div>
-		</div>
+<div>
+	{#each items as item}
 		<div>
-			{item.description}
+			<div class="flex gap-3">
+				<div>
+					{item.name}
+				</div>
+				<div>
+					{item.glass}
+				</div>
+				<div>
+					{item.bottle}
+				</div>
+			</div>
+			<div>
+				{item.description}
+			</div>
 		</div>
-	</div>
-{/each}
+	{/each}
+</div>
