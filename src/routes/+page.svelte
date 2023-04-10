@@ -59,6 +59,8 @@
 	class="
 		m-6 sm:m-8 md:m-12
 		space-y-9 sm:space-y-12
+		border-r border-black
+		bg-gradient-to-r from-indigo-500
 	"
 >
 	<div
@@ -104,8 +106,8 @@
 		"
 	>
 		{#each Object.entries(groups) as [category, products]}
-			<div class="border border-black p-5">
-				<h1 class="uppercase font-medium text-3xl font-sans">
+			<div class="border-0 border-black p-2">
+				<h1 class="uppercase font-medium text-3xl font-mono">
 					{category}
 				</h1>
 				<div class="border-b border-black my-3" />
@@ -143,7 +145,7 @@
 		{/each}
 	</div>
 
-	<div class="flex justify-end">
+	<div class="flex justify-end px-2.5">
 		{#each footers as footer}
 			<div class="font-mono">
 				{footer.name}
