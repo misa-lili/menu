@@ -82,14 +82,14 @@
 						line-height: 4.5rem;
 					"
 				>
-					{title.name}
+					{@html title.name}
 				</div>
 			{/each}
 		</div>
 		<div class="self-center">
 			{#each headers as header}
 				<div class="text-2xl">
-					{header.name}
+					{@html header.name}
 				</div>
 			{/each}
 		</div>
@@ -106,7 +106,7 @@
 		{#each Object.entries(groups) as [category, products]}
 			<div class="border-0 border-black p-2">
 				<h1 class="uppercase font-medium text-3xl font-mono">
-					{category}
+					{@html category}
 				</h1>
 				<!-- <div class="border-b border-black my-3" /> -->
 				{#each products as product}
@@ -116,7 +116,7 @@
 								class="basis-auto flex-grow text-xl uppercase decoration-slice"
 								class:line-through={product.out}
 							>
-								{product.name}
+								{@html product.name}
 							</div>
 							{#if product.glass !== ''}
 								<div class="w-[32px] font-serif text-lg text-right">
@@ -135,7 +135,7 @@
 							{/if}
 						</div>
 						<div class="text-sm">
-							{product.description}
+							{@html product.description}
 						</div>
 					</div>
 				{/each}
@@ -146,7 +146,7 @@
 	<div class="flex justify-end px-2.5">
 		{#each footers as footer}
 			<div class="font-mono">
-				{footer.name}
+				{@html footer.name}
 			</div>
 		{/each}
 	</div>
