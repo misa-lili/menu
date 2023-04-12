@@ -145,7 +145,7 @@
 
 	<div class="flex justify-end px-2.5">
 		{#each footers as footer}
-			<div class="font-mono">
+			<div class="font-mono text-right">
 				{@html footer.name}
 			</div>
 		{/each}
