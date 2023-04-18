@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	/** @type {import('./$types').PageData} */
 	export let data;
 
@@ -42,6 +44,14 @@
 				return acc;
 			}, {});
 	}
+
+	onMount(async () => {
+		const Masonry = (await import('masonry-layout')).default;
+		new Masonry('.m-container', {
+			itemSelector: '.m-card',
+			gutter: 60
+		});
+	});
 
 	const parseProperties = (row) =>
 		Object.entries(row.properties).reduce((acc, [k, v]) => {
@@ -88,7 +98,7 @@
 		</div>
 		<div class="self-center">
 			{#each headers as header}
-				<div class="text-2xl">
+				<div class="text-1xl">
 					{@html header.name}
 				</div>
 			{/each}
@@ -97,20 +107,17 @@
 
 	<div
 		class="
-			grid
-			grid-cols-1 sm:grid-cols-2
-			gap-y-9
-			gap-x-9 lg:gap-x-24
+			m-container
 		"
 	>
 		{#each Object.entries(groups) as [category, products]}
-			<div class="border-0 border-black p-2">
+			<div class="m-card w-full sm:w-[calc(100%/2-30px)] border-0 border-black p-2">
 				<h1 class="uppercase font-medium text-3xl font-mono">
 					{@html category}
 				</h1>
 				<!-- <div class="border-b border-black my-3" /> -->
 				{#each products as product}
-					<div class="my-4">
+					<div class="my-5">
 						<div class="flex space-x-3 pr-0.5">
 							<div
 								class="basis-auto flex-grow text-xl uppercase decoration-slice"
@@ -134,7 +141,7 @@
 								</div>
 							{/if}
 						</div>
-						<div class="text-sm">
+						<div class="text-sm mt-1">
 							{@html product.description}
 						</div>
 					</div>
