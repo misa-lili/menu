@@ -2,6 +2,9 @@
 	import { fade, slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { goto } from '$app/navigation';
+	import bcrypt from 'bcryptjs';
+	import crypto from 'crypto';
+
 	let isSignUp: boolean = false;
 
 	let email: string = '';
@@ -18,12 +21,18 @@
 
 	const signIn = async () => {
 		const result = await fetch(`/api/v1/users?key=${email}&pw=${password}`).then((r) => r.json());
-		if (result.status === 200) goto('/citypub');
-		else alert('회원 정보를 확인해 주세요');
+
+		if (result.status === 200) {
+			window.sessionStorage.setItem('atoken', result.body.atoken);
+			window.sessionStorage.setItem('rtoken', result.body.rtoken);
+			goto(`/${result.body.mids[0]}`);
+		} else alert('회원 정보를 확인해 주세요');
 	};
+
 	const toggleSignUp = () => {
 		isSignUp = !isSignUp;
 	};
+
 	const signUp = async () => {
 		// 이메일 유효성 검사
 		if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
@@ -65,13 +74,13 @@
 			return alert(`해당 메뉴 아이디는 이미 존재합니다.`);
 		}
 
-		//TODO: 이메일 인증 및 이메일, 패스워드 암호화
+		// TODO: 이메일 인증
 
 		// users에 put
-		await fetch(`/api/v1/users?key=${email}`, {
+		const result = await fetch(`/api/v1/users?key=${email}`, {
 			method: 'PUT',
 			body: JSON.stringify({
-				password,
+				password: hashedPassword,
 				mids: [mid]
 			})
 		});
@@ -89,6 +98,10 @@
 
 		// 가입 완료
 		alert(`회원 가입 되었습니다.`);
+
+		// a, r토큰 발행
+		window.sessionStorage.setItem('atoken', result.body.atoken);
+		window.sessionStorage.setItem('rtoken', result.body.rtoken);
 
 		// goto /mid
 		goto(`/${mid}`);

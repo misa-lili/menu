@@ -26,15 +26,6 @@ export async function GET({ url }) {
 			return json({ ok: true, status: 200, body });
 		}
 	}
-	// Get all titles
-	// else
-	// 	return fetch(
-	// 		`https://api.cloudflare.com/client/v4/accounts/${account_id}/storage/kv/namespaces/${namespace_id}/keys`,
-	// 		{
-	// 			method: 'GET',
-	// 			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${workers_token}` }
-	// 		}
-	// 	);
 }
 
 export async function PUT({ url, request }) {

@@ -11,13 +11,17 @@
 		Plus,
 		FolderPlus,
 		CloudArrowUp,
-		UserCircle,
-		UserGroup
+		UserGroup,
+		Cog6Tooth,
+		Bolt
 	} from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
 	import jsonData from './data.json';
 	import dummyData from './dummy.json';
 	import { error } from '@sveltejs/kit';
+	import { page } from '$app/stores';
+	import jwt_decode from 'jwt-decode';
+	import { goto } from '$app/navigation';
 
 	let menu: Menu = dummyData;
 
@@ -25,10 +29,16 @@
 		menu = data.body;
 	}
 
-	let isGuest: boolean = false;
+	let isGuest: boolean = true;
+	let isOwner: boolean = false;
 
-	onMount(() => {
+	onMount(async () => {
 		insertImage(menu.title, menu.title);
+
+		const atoken = window.sessionStorage.getItem('atoken');
+		if (atoken && jwt_decode(atoken).mids.includes($page.params.mid)) {
+			isOwner = true;
+		}
 	});
 
 	const addHeader = () => {
@@ -102,7 +112,7 @@
 	};
 </script>
 
-<div class="flex space-x-1">
+<div class="flex space-x-1" class:hidden={!isOwner}>
 	<div class="cursor-pointer text-orange-500 hover:text-orange-400" on:click={save}>
 		<Icon src={CloudArrowUp} class="w-6 h-6" />
 	</div>
@@ -113,9 +123,9 @@
 		}}
 	>
 		{#if isGuest}
-			<Icon src={UserGroup} class="w-6 h-6" />
+			<Icon src={Cog6Tooth} class="w-6 h-6" />
 		{:else}
-			<Icon src={UserCircle} class="w-6 h-6" />
+			<Icon src={UserGroup} class="w-6 h-6" />
 		{/if}
 	</div>
 </div>
@@ -329,6 +339,11 @@
 				</div>
 			</div>
 		{/each}
+		<div class="flex justify-end text-right">
+			<div class="flex cursor-pointer text-violet-500" on:click={() => goto('/')}>
+				<Icon src={Bolt} class="w-6 h-6" /> <span>BY 뀨알</span>
+			</div>
+		</div>
 		<div class="flex justify-end">
 			<div
 				class="inline-block text-sm items-center cursor-pointer text-violet-500 hover:text-violet-400"
