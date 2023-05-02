@@ -7,6 +7,34 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
+
+	// key is mid
+	type Menu = {
+		title: string;
+		headers: [string];
+		footers: [string];
+		groups: [
+			{
+				name: string;
+				col?: string;
+				items: [
+					{
+						name: string;
+						price: string;
+						description?: string;
+						image?: string;
+						out?: boolean;
+					}
+				];
+			}
+		];
+	};
+
+	/** key is email */
+	type User = {
+		password: string;
+		mids: [mid: string];
+	};
 }
 
 export {};

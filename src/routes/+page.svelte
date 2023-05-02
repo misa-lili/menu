@@ -1,160 +1,188 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { fade, slide } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import { goto } from '$app/navigation';
+	let isSignUp: boolean = false;
 
-	/** @type {import('./$types').PageData} */
-	export let data;
+	let email: string = '';
+	let isEmailError: boolean = false;
 
-	type Item = {
-		category: string;
-		name: string;
-		glass: number;
-		bottle: number;
-		price: number;
-		description: string;
-		out: boolean;
+	let password: string = '';
+	let isPasswordError: boolean = false;
+
+	let password2: string = '';
+	let isPassword2Error: boolean = false;
+
+	let mid: string = '';
+	let isMidError: boolean = false;
+
+	const signIn = async () => {
+		const result = await fetch(`/api/v1/users?key=${email}&pw=${password}`).then((r) => r.json());
+		if (result.status === 200) goto('/citypub');
+		else alert('회원 정보를 확인해 주세요');
 	};
+	const toggleSignUp = () => {
+		isSignUp = !isSignUp;
+	};
+	const signUp = async () => {
+		// 이메일 유효성 검사
+		if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+			isEmailError = true;
+			return alert('이메일이 유효하지 않습니다.');
+		}
 
-	/**
-	 * Parsed Raw Data
-	 */
-	let items: Item[];
+		// 이메일 존재하는지 확인
+		const user = await fetch(`/api/v1/users?key=${email}`).then((r) => r.json());
+		if (user.ok) {
+			isEmailError = true;
+			return alert(`해당 이메일로 이미 가입된 회원이 있습니다.`);
+		}
 
-	/**
-	 * Fixed Items
-	 */
-	let titles: Item[];
-	let headers: Item[];
-	let footers: Item[];
+		// 패스워드 일치
+		if (password !== password2) {
+			isPasswordError = true;
+			isPassword2Error = true;
+			return alert(`암호가 암호 재입력과 일치하지 않습니다.`);
+		}
 
-	/**
-	 * Dynamic Items
-	 */
-	let groups: { string: Item[] };
+		// 패스워드 4자 이상
+		if (password.length < 4) {
+			isPasswordError = true;
+			isPassword2Error = true;
+			return alert(`암호를 4자 이상으로 입력해 주세요.`);
+		}
 
-	$: {
-		items = data.results.map((row) => parseProperties(row));
-		titles = items.filter((i) => i.category === 'title');
-		headers = items.filter((i) => i.category === 'header');
-		footers = items.filter((i) => i.category === 'footer');
-		groups = items
-			.filter((i) => i.category !== 'title' && i.category !== 'header' && i.category !== 'footer')
-			.reduce((acc, cur) => {
-				if (acc[cur.category] === undefined) acc[cur.category] = [];
-				acc[cur.category].push(cur);
-				return acc;
-			}, {});
-	}
+		// mid a-z,_,-유효성 검사
+		if (!/^[0-9A-Za-z\-_]+$/.test(mid)) {
+			isMidError = true;
+			return alert(`메뉴 아이디는 영어, 숫자, 대시만 사용 가능합니다.`);
+		}
 
-	onMount(async () => {
-		const Masonry = (await import('masonry-layout')).default;
-		new Masonry('.m-container', {
-			itemSelector: '.m-card',
-			gutter: 60
+		// mid 존재하는지 확인
+		const menu = await fetch(`/api/v1/menus?key=${mid}`).then((r) => r.json());
+		if (menu.ok) {
+			isMidError = true;
+			return alert(`해당 메뉴 아이디는 이미 존재합니다.`);
+		}
+
+		//TODO: 이메일 인증 및 이메일, 패스워드 암호화
+
+		// users에 put
+		await fetch(`/api/v1/users?key=${email}`, {
+			method: 'PUT',
+			body: JSON.stringify({
+				password,
+				mids: [mid]
+			})
 		});
-	});
 
-	const parseProperties = (row) =>
-		Object.entries(row.properties).reduce((acc, [k, v]) => {
-			if (v.type === 'number') acc[k] = v.number || '';
-			else if (v.type === 'select') acc[k] = v.select?.name || '';
-			else if (v.type === 'title') acc[k] = v.title[0]?.text?.content || '';
-			else if (v.type === 'rich_text') acc[k] = v.rich_text[0]?.text?.content || '';
-			else if (v.type === 'checkbox') acc[k] = v.checkbox;
-			else acc[k] = '';
-			return acc;
-		}, {});
+		// menus에 put
+		await fetch(`/api/v1/menus?key=${mid}`, {
+			method: 'PUT',
+			body: JSON.stringify({
+				title: '',
+				headers: [],
+				footers: [],
+				groups: []
+			})
+		});
+
+		// 가입 완료
+		alert(`회원 가입 되었습니다.`);
+
+		// goto /mid
+		goto(`/${mid}`);
+	};
 </script>
 
-<div
-	class="
-		m-6 sm:m-8 md:m-12
-		space-y-9 sm:space-y-12
-	"
->
-	<div
-		id="top"
-		class="
-			grid
-			grid-cols-1
-			gap-y-6
-			gap-x-9 lg:gap-x-24
-			p-1
-		"
-	>
-		<div class="self-center">
-			{#each titles as title}
-				<div
-					class="
-						font-black
-					"
-					style="
-						font-size: 6.25rem;
-						line-height: 4.5rem;
-					"
-				>
-					{@html title.name}
-				</div>
-			{/each}
-		</div>
-		<div class="self-center">
-			{#each headers as header}
-				<div class="text-1xl">
-					{@html header.name}
-				</div>
-			{/each}
+<div class="py-9 px-6 space-y-9">
+	<div class="text-center text-6xl font-bold font-mono">QQUR</div>
+	<hr />
+	<div class="flex flex-col space-y-6">
+		<input
+			type="email"
+			placeholder="이메일"
+			class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
+			class:border-red-400={isEmailError}
+			class:text-red-400={isEmailError}
+			bind:value={email}
+			on:focus={() => {
+				if (isEmailError) {
+					email = '';
+					isEmailError = false;
+				}
+			}}
+		/>
+		<input
+			type="password"
+			placeholder="암호"
+			class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
+			class:border-red-400={isPasswordError}
+			class:text-red-400={isPasswordError}
+			bind:value={password}
+			on:focus={() => {
+				if (isPasswordError) {
+					password = '';
+					password2 = '';
+					isPasswordError = false;
+					isPassword2Error = false;
+				}
+			}}
+		/>
+		{#if isSignUp === true}
+			<input
+				transition:fade
+				type="password"
+				placeholder="암호 재입력"
+				class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
+				class:border-red-400={isPassword2Error}
+				class:text-red-400={isPassword2Error}
+				bind:value={password2}
+				on:focus={() => {
+					if (isPassword2Error) {
+						password = '';
+						password2 = '';
+						isPasswordError = false;
+						isPassword2Error = false;
+					}
+				}}
+			/>
+			<input
+				transition:fade
+				type="text"
+				placeholder="메뉴 아이디 (가입 이후 수정 가능)"
+				class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
+				class:border-red-400={isMidError}
+				class:text-red-400={isMidError}
+				bind:value={mid}
+				on:focus={() => {
+					if (isMidError) {
+						mid = '';
+						isMidError = false;
+					}
+				}}
+			/>
+		{/if}
+		<input
+			type="button"
+			class="font-extralight h-12 rounded-full bg-black text-white px-3 cursor-pointer"
+			value={isSignUp ? '회원가입' : '로그인'}
+			on:click={() => {
+				if (isSignUp) signUp();
+				else signIn();
+			}}
+		/>
+		<div class="font-extralight text-center">
+			{isSignUp ? '이미 회원이세요?' : '뀨알이 처음이세요?'}
+			<a on:click={toggleSignUp} class="cursor-pointer text-blue-500 font-medium"
+				>{isSignUp ? '로그인' : '가입'}</a
+			>하러 갈게요.
 		</div>
 	</div>
-
-	<div
-		class="
-			m-container
-		"
-	>
-		{#each Object.entries(groups) as [category, products]}
-			<div class="m-card w-full sm:w-[calc(100%/2-30px)] border-0 border-black p-2">
-				<h1 class="uppercase font-medium text-3xl font-mono">
-					{@html category}
-				</h1>
-				<!-- <div class="border-b border-black my-3" /> -->
-				{#each products as product}
-					<div class="my-5">
-						<div class="flex space-x-3 pr-0.5">
-							<div
-								class="basis-auto flex-grow text-xl uppercase decoration-slice"
-								class:line-through={product.out}
-							>
-								{@html product.name}
-							</div>
-							{#if product.glass !== ''}
-								<div class="w-[32px] font-serif text-lg text-right">
-									{product.glass < 0 ? '' : (product.glass / 10000).toFixed(1)}
-								</div>
-							{/if}
-							{#if product.bottle !== ''}
-								<div class="w-[32px] font-serif text-lg text-right">
-									{product.bottle < 0 ? '' : (product.bottle / 10000).toFixed(1)}
-								</div>
-							{/if}
-							{#if product.price !== ''}
-								<div class="w-[32px] font-serif text-lg text-right">
-									{product.price < 0 ? '' : (product.price / 10000).toFixed(1)}
-								</div>
-							{/if}
-						</div>
-						<div class="text-sm mt-1">
-							{@html product.description}
-						</div>
-					</div>
-				{/each}
-			</div>
-		{/each}
-	</div>
-
-	<div class="flex justify-end px-2.5">
-		{#each footers as footer}
-			<div class="font-mono text-right">
-				{@html footer.name}
-			</div>
-		{/each}
+	<hr />
+	<h1 class="text-4xl">심플한 <b>무료</b> QR 메뉴 서비스</h1>
+	<div>서비스 설명 쭉 아래로</div>
+	<div>
+		<img src="/screenshot1.png" />
 	</div>
 </div>
