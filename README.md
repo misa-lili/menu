@@ -1,38 +1,32 @@
-# create-svelte
+# API
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## MENU
 
-## Creating a project
+### GET /api/v1/menus?key=mid
 
-If you're seeing this, you've probably already done this step. Congrats!
+메뉴의 데이터를 불러옵니다.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- Response 200 : body
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+### PUT /api/v1/menus?key=mid
 
-## Developing
+메뉴를 생성 또는 수정합니다.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- Request
+  - Bearer
+  - Body : {}
+- Response : null
 
-```bash
-npm run dev
+## USERS
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+### GET /api/v1/users?key=email
 
-## Building
+이메일의 유저가 있는지 확인합니다.
 
-To create a production version of your app:
+- Response : null
 
-```bash
-npm run build
-```
+### GET /api/v1/users?key=email&pw=password
 
-You can preview the production build with `npm run preview`.
+로그인하고 atoken, rtoken을 발급 받습니다.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+- Response : atoken, rtoken

@@ -13,7 +13,9 @@
 		CloudArrowUp,
 		UserGroup,
 		Cog6Tooth,
-		Bolt
+		Bolt,
+		LockClosed,
+		LockOpen
 	} from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
 	import jsonData from './data.json';
@@ -22,6 +24,7 @@
 	import { page } from '$app/stores';
 	import jwt_decode from 'jwt-decode';
 	import { goto } from '$app/navigation';
+	import Qr from '$lib/QR.svelte';
 
 	let menu: Menu = dummyData;
 
@@ -33,6 +36,12 @@
 	let isOwner: boolean = false;
 
 	onMount(async () => {
+		const Masonry = (await import('masonry-layout')).default;
+		new Masonry('._groups', {
+			itemSelector: '._group',
+			gutter: 60
+		});
+
 		insertImage(menu.title, menu.title);
 
 		const atoken = window.sessionStorage.getItem('atoken');
@@ -122,10 +131,15 @@
 			isGuest = !isGuest;
 		}}
 	>
-		{#if isGuest}
+		<!-- {#if isGuest}
 			<Icon src={Cog6Tooth} class="w-6 h-6" />
 		{:else}
 			<Icon src={UserGroup} class="w-6 h-6" />
+		{/if} -->
+		{#if isGuest}
+			<Icon src={LockOpen} class="w-6 h-6" />
+		{:else}
+			<Icon src={LockClosed} class="w-6 h-6" />
 		{/if}
 	</div>
 </div>
@@ -195,12 +209,12 @@
 
 	<div class="_groups">
 		{#each menu.groups as group, gidx (gidx)}
-			<div class="_group flex flex-col">
+			<div class="_group w-full sm:w-[calc(100%/2-30px)] flex flex-col">
 				<div class="flex items-end">
 					<div
 						class="_group_name uppercase flex-1"
 						class:hidden={isGuest && group === ''}
-						placeholder={isGuest ? '' : 'Group Name'}
+						placeholder={isGuest ? '' : '그룹 이름'}
 						contenteditable={!isGuest}
 						on:input={(event) => {
 							menu.groups[gidx].name = event.target.innerText;
@@ -212,7 +226,7 @@
 					<div
 						class="_group_col font-mono text-right"
 						class:hidden={isGuest && !group.col}
-						placeholder="칸 설명"
+						placeholder={isGuest ? '' : '칸 설명'}
 						contenteditable={!isGuest}
 						on:input={(event) => {
 							menu.groups[gidx].col = event.target.innerText;
@@ -273,7 +287,7 @@
 							</div>
 							<div
 								class="_description text-sm"
-								placeholder="Description"
+								placeholder={isGuest ? '' : '상세 설명'}
 								contenteditable={!isGuest}
 								on:input={(event) => {
 									menu.groups[gidx].items[iidx].description = event.target.innerText;
@@ -339,11 +353,6 @@
 				</div>
 			</div>
 		{/each}
-		<div class="flex justify-end text-right">
-			<div class="flex cursor-pointer text-violet-500" on:click={() => goto('/')}>
-				<Icon src={Bolt} class="w-6 h-6" /> <span>BY 뀨알</span>
-			</div>
-		</div>
 		<div class="flex justify-end">
 			<div
 				class="inline-block text-sm items-center cursor-pointer text-violet-500 hover:text-violet-400"
@@ -353,6 +362,14 @@
 				}}
 			>
 				<Icon src={Plus} class="w-6 h-6" />
+			</div>
+		</div>
+		<div class="flex justify-end">
+			<Qr url={`https://qqur.app/${$page.params.mid}`} />
+		</div>
+		<div class="flex justify-end text-right">
+			<div class="flex cursor-pointer text-violet-500" on:click={() => goto('/')}>
+				<Icon src={Bolt} class="w-6 h-6" /> <span>BY 뀨알</span>
 			</div>
 		</div>
 	</div>
@@ -395,15 +412,34 @@
 	}
 
 	._header {
-		@apply text-xl;
+		@apply text-lg;
+	}
+
+	._groups {
+	}
+
+	._group {
+		@apply space-y-6 mb-12;
 	}
 
 	._group_name {
 		@apply uppercase font-medium text-3xl font-mono;
 	}
 
+	._item {
+		@apply space-y-1;
+	}
+
 	._item_name {
 		@apply basis-auto flex-grow text-xl uppercase decoration-slice;
+	}
+
+	._item_price {
+		@apply font-extralight;
+	}
+
+	._description {
+		@apply font-extralight;
 	}
 
 	._footer_container {
