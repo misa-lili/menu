@@ -78,6 +78,9 @@
 		// users에 put
 		const result = await fetch(`/api/v1/users?key=${email}`, {
 			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
 			body: JSON.stringify({
 				password,
 				mids: [mid]
@@ -87,6 +90,9 @@
 		// menus에 put
 		await fetch(`/api/v1/menus?key=${mid}`, {
 			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
 			body: JSON.stringify({
 				title: '',
 				headers: [],
