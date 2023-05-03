@@ -71,7 +71,7 @@ export async function GET({ url }) {
 	}
 }
 
-export async function PUT({ url, request }) {
+export async function POST({ url, request }) {
 	// 회원 가입
 	const email = url.searchParams.get('key');
 	if (email === null) return json({ ok: false, status: 500 });

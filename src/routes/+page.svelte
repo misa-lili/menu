@@ -77,7 +77,7 @@
 
 		// users에 put
 		const result = await fetch(`/api/v1/users?key=${email}`, {
-			method: 'PUT',
+			method: 'POST',
 			body: JSON.stringify({
 				password,
 				mids: [mid]
@@ -86,7 +86,7 @@
 
 		// menus에 put
 		await fetch(`/api/v1/menus?key=${mid}`, {
-			method: 'PUT',
+			method: 'POST',
 			body: JSON.stringify({
 				title: '',
 				headers: [],

@@ -37,7 +37,9 @@
 	let masonry;
 
 	onMount(async () => {
-		insertImage(menu.title, menu.title);
+		if (menu.title && window && document) {
+			insertImage();
+		}
 
 		const atoken = window.sessionStorage.getItem('atoken');
 		if (atoken && jwt_decode(atoken).mids.includes($page.params.mid)) {
