@@ -1,0 +1,14 @@
+[Unit]
+Description=qqur
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=turg
+WorkingDirectory=/home/turg/Projects/qqur
+ExecStart=/usr/bin/node build
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
