@@ -18,15 +18,13 @@
 		LockOpen
 	} from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
-	import jsonData from './data.json';
-	import dummyData from './dummy.json';
 	import { error } from '@sveltejs/kit';
 	import { page } from '$app/stores';
 	import jwt_decode from 'jwt-decode';
 	import { goto } from '$app/navigation';
 	import Qr from '$lib/QR.svelte';
 
-	let menu: Menu = dummyData;
+	let menu: Menu;
 
 	$: {
 		menu = data.body;

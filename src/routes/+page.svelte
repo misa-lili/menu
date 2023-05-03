@@ -3,7 +3,6 @@
 	import { flip } from 'svelte/animate';
 	import { goto } from '$app/navigation';
 	import bcrypt from 'bcryptjs';
-	import crypto from 'crypto';
 
 	let isSignUp: boolean = false;
 
@@ -80,7 +79,7 @@
 		const result = await fetch(`/api/v1/users?key=${email}`, {
 			method: 'PUT',
 			body: JSON.stringify({
-				password: hashedPassword,
+				password,
 				mids: [mid]
 			})
 		});
@@ -195,7 +194,4 @@
 	<hr />
 	<h1 class="text-4xl">심플한 <b>무료</b> QR 메뉴 서비스</h1>
 	<div>서비스 설명 쭉 아래로</div>
-	<div>
-		<img src="/screenshot1.png" />
-	</div>
 </div>

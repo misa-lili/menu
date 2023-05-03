@@ -1,4 +1,5 @@
-import crypto from 'crypto';
+import * as crypto from 'crypto';
+
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 // atoken
 
