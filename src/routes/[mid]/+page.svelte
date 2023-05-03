@@ -45,6 +45,8 @@
 		if (atoken && jwt_decode(atoken).mids.includes($page.params.mid)) {
 			isOwner = true;
 			toggleEdit(true);
+		} else {
+			toggleEdit(false);
 		}
 	});
 
