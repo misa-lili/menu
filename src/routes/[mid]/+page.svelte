@@ -33,20 +33,38 @@
 	let isGuest: boolean = true;
 	let isOwner: boolean = false;
 
-	onMount(async () => {
-		const Masonry = (await import('masonry-layout')).default;
-		new Masonry('._groups', {
-			itemSelector: '._group',
-			gutter: 60
-		});
+	let Masonry;
+	let masonry;
 
+	onMount(async () => {
 		insertImage(menu.title, menu.title);
 
 		const atoken = window.sessionStorage.getItem('atoken');
 		if (atoken && jwt_decode(atoken).mids.includes($page.params.mid)) {
 			isOwner = true;
+			toggleEdit(true);
 		}
 	});
+
+	const toggleEdit = async (value?: boolean) => {
+		if (value === true) {
+			isGuest = false;
+		} else if (value === false) {
+			isGuest = true;
+		} else {
+			isGuest = !isGuest;
+		}
+
+		if (isGuest) {
+			Masonry = (await import('masonry-layout')).default;
+			masonry = new Masonry('.m-container', {
+				itemSelector: '.m-card',
+				gutter: 60
+			});
+		} else {
+			masonry.destroy();
+		}
+	};
 
 	const addHeader = () => {
 		menu.headers = [...menu.headers, ''];
@@ -126,14 +144,10 @@
 	<div
 		class="cursor-pointer text-orange-500 hover:text-orange-400"
 		on:click={() => {
-			isGuest = !isGuest;
+			// isGuest = !isGuest;
+			toggleEdit();
 		}}
 	>
-		<!-- {#if isGuest}
-			<Icon src={Cog6Tooth} class="w-6 h-6" />
-		{:else}
-			<Icon src={UserGroup} class="w-6 h-6" />
-		{/if} -->
 		{#if isGuest}
 			<Icon src={LockOpen} class="w-6 h-6" />
 		{:else}
@@ -205,9 +219,9 @@
 		</div>
 	</div>
 
-	<div class="_groups">
+	<div class="_groups m-container">
 		{#each menu.groups as group, gidx (gidx)}
-			<div class="_group w-full sm:w-[calc(100%/2-30px)] flex flex-col">
+			<div class="_group m-card w-full sm:w-[calc(100%/2-30px)] flex flex-col">
 				<div class="flex items-end">
 					<div
 						class="_group_name uppercase flex-1"

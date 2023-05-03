@@ -82,7 +82,7 @@
 				password,
 				mids: [mid]
 			})
-		});
+		}).then((r) => r.json());
 
 		// menus에 put
 		await fetch(`/api/v1/menus?key=${mid}`, {
@@ -95,12 +95,12 @@
 			})
 		});
 
-		// 가입 완료
-		alert(`회원 가입 되었습니다.`);
-
-		// a, r토큰 발행
+		// a, r토큰 저장
 		window.sessionStorage.setItem('atoken', result.body.atoken);
 		window.sessionStorage.setItem('rtoken', result.body.rtoken);
+
+		// 가입 완료
+		alert(`회원 가입 되었습니다.`);
 
 		// goto /mid
 		goto(`/${mid}`);
