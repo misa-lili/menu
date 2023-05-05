@@ -77,7 +77,7 @@
 
 		// users에 put
 		const result = await fetch(`/api/v1/users?key=${email}`, {
-			method: 'POST',
+			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -89,7 +89,7 @@
 
 		// menus에 put
 		await fetch(`/api/v1/menus?key=${mid}`, {
-			method: 'POST',
+			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
 			},

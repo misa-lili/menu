@@ -28,7 +28,7 @@ export async function GET({ url }) {
 	}
 }
 
-export async function POST({ url, request }) {
+export async function PUT({ url, request }) {
 	const key = url.searchParams.get('key');
 	const body = JSON.stringify(await request.json());
 	// PUT menu
