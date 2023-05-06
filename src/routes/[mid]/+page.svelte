@@ -15,7 +15,8 @@
 		Cog6Tooth,
 		Bolt,
 		LockClosed,
-		LockOpen
+		LockOpen,
+		XMark
 	} from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
 	import { error } from '@sveltejs/kit';
@@ -32,11 +33,20 @@
 
 	let isGuest: boolean = true;
 	let isOwner: boolean = false;
+	let isExpired: boolean = false;
 
 	let Masonry;
 	let masonry;
 
+	let email: string = '';
+	let isEmailError: boolean = false;
+
+	let password: string = '';
+	let isPasswordError: boolean = false;
+
 	onMount(async () => {
+		await initMasonry();
+
 		if (menu.title && window && document) {
 			insertImage();
 		}
@@ -50,6 +60,14 @@
 		}
 	});
 
+	const initMasonry = async () => {
+		Masonry = (await import('masonry-layout')).default;
+		masonry = new Masonry('.m-container', {
+			itemSelector: '.m-card',
+			gutter: 60
+		});
+	};
+
 	const toggleEdit = async (value?: boolean) => {
 		if (value === true) {
 			isGuest = false;
@@ -60,11 +78,7 @@
 		}
 
 		if (isGuest) {
-			Masonry = (await import('masonry-layout')).default;
-			masonry = new Masonry('.m-container', {
-				itemSelector: '.m-card',
-				gutter: 60
-			});
+			await initMasonry();
 		} else {
 			masonry.destroy();
 		}
@@ -111,12 +125,55 @@
 		if (isSaving === true) return;
 		isSaving = true;
 		const mid = window.location.pathname.slice(1);
+
 		const result = await fetch(`/api/v1/menus?key=${mid}`, {
 			method: 'PUT',
+			headers: {
+				Authorization: 'Bearer ' + window.sessionStorage.getItem('atoken')
+			},
 			body: JSON.stringify(menu)
-		}).then((r) => r.json());
-		if (result.ok === true) alert('저장되었습니다.');
+		})
+			.then((r) => r.json())
+			.catch((error) => {
+				console.log(error);
+			});
+
+		if ([401, 403].includes(result.status)) {
+			console.log('토큰이 만료되어 rtoken으로 재시도');
+			const result2 = await fetch(`/api/v1/menus?key=${mid}`, {
+				method: 'PUT',
+				headers: {
+					Authorization: 'Bearer ' + window.sessionStorage.getItem('rtoken')
+				},
+				body: JSON.stringify(menu)
+			})
+				.then((r) => r.json())
+				.catch((error) => {
+					console.log(error);
+				});
+
+			if (result2.status === 200) {
+				window.sessionStorage.setItem('atoken', result2.body.atoken);
+				alert('저장되었습니다.');
+			} else {
+				isExpired = true;
+				alert('로그인이 만료되었습니다.'); // TODO: 세션에 임시 저장?
+			}
+		}
+
+		if (result.status === 200) alert('저장되었습니다.');
 		isSaving = false;
+	};
+
+	const signInAndSave = async () => {
+		const result = await fetch(`/api/v1/users?key=${email}&pw=${password}`).then((r) => r.json());
+
+		if (result.status === 200) {
+			window.sessionStorage.setItem('atoken', result.body.atoken);
+			window.sessionStorage.setItem('rtoken', result.body.rtoken);
+			save();
+			isExpired = false;
+		} else alert('회원 정보를 확인해 주세요');
 	};
 
 	const splice = (arr: any[], idx: number) => {
@@ -140,6 +197,59 @@
 		menu = menu;
 	};
 </script>
+
+<dialog class="bg-white/50 fixed w-full h-full" open={isExpired}>
+	<div class="bg-white border rounded-3xl flex flex-col space-y-6 px-3 pt-3 pb-12">
+		<div class="flex justify-end">
+			<div
+				class="cursor-pointer"
+				on:click={() => {
+					isExpired = false;
+				}}
+			>
+				<Icon src={XMark} class="w-6 h-6" />
+			</div>
+		</div>
+		<p class="text-center">로그인이 만료되었습니다. 로그인해주세요.</p>
+		<input
+			type="email"
+			placeholder="이메일"
+			class="font-extralight bg-stone-100 rounded-full p-3 px-5 border shadow-inner"
+			class:border-red-400={isEmailError}
+			class:text-red-400={isEmailError}
+			bind:value={email}
+			on:focus={() => {
+				if (isEmailError) {
+					email = '';
+					isEmailError = false;
+				}
+			}}
+		/>
+		<input
+			type="password"
+			placeholder="암호"
+			class="font-extralight bg-stone-100 rounded-full p-3 px-5 border shadow-inner"
+			class:border-red-400={isPasswordError}
+			class:text-red-400={isPasswordError}
+			bind:value={password}
+			on:focus={() => {
+				if (isPasswordError) {
+					password = '';
+					password2 = '';
+					isPasswordError = false;
+					isPassword2Error = false;
+				}
+			}}
+		/>
+
+		<input
+			type="button"
+			class="font-extralight h-12 rounded-full bg-black text-white px-3 cursor-pointer"
+			value="로그인"
+			on:click={signInAndSave}
+		/>
+	</div>
+</dialog>
 
 <div class="flex space-x-1" class:hidden={!isOwner}>
 	<div class="cursor-pointer text-orange-500 hover:text-orange-400" on:click={save}>

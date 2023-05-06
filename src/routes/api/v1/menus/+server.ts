@@ -1,5 +1,7 @@
 import { workers_token, account_id, menus_namespace_id } from '$env/static/private';
+import { signToken, verifyToken } from '$lib/server/jwt.js';
 import { json } from '@sveltejs/kit';
+import type { JwtPayload } from 'jsonwebtoken';
 
 const namespace_id = menus_namespace_id;
 
@@ -31,6 +33,28 @@ export async function GET({ url }) {
 export async function PUT({ url, request }) {
 	const key = url.searchParams.get('key');
 	const body = JSON.stringify(await request.json());
+
+	const token = request.headers.get('Authorization')?.split(' ')[1] ?? null;
+
+	try {
+		if (token === null) {
+			// A 토큰이 없음
+			throw new Error('401');
+		}
+		const isValid = verifyToken(token);
+
+		if ((isValid as JwtPayload).mids.includes(key) === false)
+			throw new Error('Forbidden: no permission');
+	} catch (error) {
+		return json({ ok: false, status: 403 });
+	}
+
+	let atoken = null;
+	const payload: JwtPayload = verifyToken(token) as JwtPayload;
+	if (payload.sub === 'r') {
+		atoken = signToken({ sub: 'a', uid: payload.uid, mids: payload.mids });
+	}
+
 	// PUT menu
 	await fetch(
 		`https://api.cloudflare.com/client/v4/accounts/${account_id}/storage/kv/namespaces/${namespace_id}/values/${key}`,
@@ -45,6 +69,5 @@ export async function PUT({ url, request }) {
 		}
 	);
 
-	//TODO: 제대로 하세요~
-	return json({ ok: true, status: 200 });
+	return json({ ok: true, status: 200, body: { atoken } });
 }

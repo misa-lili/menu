@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 // atoken
@@ -27,22 +27,29 @@ import jwt, { type JwtPayload } from 'jsonwebtoken';
 
 const jwtSecret = crypto.randomBytes(24);
 
-export const signToken = ({ sub, mids }: { sub: 'a' | 'r'; mids?: string[] }): string => {
+export const signToken = ({
+	sub,
+	uid,
+	mids
+}: {
+	sub: 'a' | 'r';
+	uid?: string;
+	mids?: string[];
+}): string => {
 	return jwt.sign(
 		{
 			sub,
+			uid,
 			mids
 		},
 		jwtSecret,
-		{ expiresIn: sub === 'a' ? '1h' : '1d' }
+		{ expiresIn: sub === 'a' ? '1d' : '3d' }
 	);
 };
 
-const verifyToken = (token: string): string | JwtPayload | void => {
-	try {
-		const decodedToken = jwt.verify(token, jwtSecret);
-		return decodedToken;
-	} catch (err) {
-		console.log(err);
-	}
+export const verifyToken = (
+	token: string
+): string | (JwtPayload & { mids?: string[]; uid?: string }) | void => {
+	const decodedToken = jwt.verify(token, jwtSecret);
+	return decodedToken;
 };

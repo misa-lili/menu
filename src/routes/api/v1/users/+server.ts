@@ -40,8 +40,8 @@ export async function GET({ url }) {
 		const compare = await bcrypt.compare(pw, result.password);
 
 		if (compare) {
-			const atoken = signToken({ sub: 'a', mids: result.mids });
-			const rtoken = signToken({ sub: 'r' });
+			const atoken = signToken({ sub: 'a', uid: encryptedEmail, mids: result.mids });
+			const rtoken = signToken({ sub: 'r', uid: encryptedEmail, mids: result.mids });
 			return json({ ok: true, status: 200, body: { mids: result.mids, atoken, rtoken } });
 		} else {
 			return json({ ok: false, status: 401 });
@@ -99,8 +99,8 @@ export async function PUT({ url, request }) {
 	);
 
 	// JWT
-	const atoken = signToken({ sub: 'a', mids: body.mids });
-	const rtoken = signToken({ sub: 'r' });
+	const atoken = signToken({ sub: 'a', uid: encryptedEmail, mids: body.mids });
+	const rtoken = signToken({ sub: 'r', uid: encryptedEmail, mids: body.mids });
 
 	return json({ ok: true, status: 200, body: { atoken, rtoken } });
 }
