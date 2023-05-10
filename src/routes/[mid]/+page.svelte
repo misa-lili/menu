@@ -16,7 +16,8 @@
 		Bolt,
 		LockClosed,
 		LockOpen,
-		XMark
+		XMark,
+		MinusCircle
 	} from 'svelte-hero-icons';
 	import { onMount } from 'svelte';
 	import { error } from '@sveltejs/kit';
@@ -387,6 +388,7 @@
 							<div class="flex">
 								<div
 									class="_item_name uppercase"
+									class:line-through={item.out}
 									placeholder={isGuest ? '' : '상품 이름'}
 									contenteditable={!isGuest}
 									on:input={(event) => {
@@ -410,6 +412,13 @@
 								<div class="_xud__pink" class:hidden={isGuest} class:flex={!isGuest}>
 									<div on:click={() => splice(menu.groups[gidx].items, iidx)}>
 										<Icon src={Trash} class="w-6 h-6" />
+									</div>
+									<div
+										on:click={() => {
+											menu.groups[gidx].items[iidx].out = !!!menu.groups[gidx].items[iidx].out;
+										}}
+									>
+										<Icon src={MinusCircle} class="w-6 h-6" />
 									</div>
 									<div on:click={() => swapOrder(menu.groups[gidx].items, iidx, false)}>
 										<Icon src={ArrowUp} class="w-6 h-6" />

@@ -30,7 +30,6 @@
 			const rtoken = window.sessionStorage.getItem('rtoken');
 			if (atoken || rtoken) {
 				const payload = jwt_decode(atoken || rtoken);
-				console.log(payload);
 				isSiginedIn = true;
 				mids = payload.mids;
 			}
