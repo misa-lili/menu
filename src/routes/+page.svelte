@@ -18,6 +18,10 @@
 	let mid: string = '';
 	let isMidError: boolean = false;
 
+	const toggleSignUp = () => {
+		isSignUp = !isSignUp;
+	};
+
 	const signIn = async () => {
 		const result = await fetch(`/api/v1/users?key=${email}&pw=${password}`).then((r) => r.json());
 
@@ -26,10 +30,6 @@
 			window.sessionStorage.setItem('rtoken', result.body.rtoken);
 			goto(`/${result.body.mids[0]}`);
 		} else alert('회원 정보를 확인해 주세요');
-	};
-
-	const toggleSignUp = () => {
-		isSignUp = !isSignUp;
 	};
 
 	const signUp = async () => {
