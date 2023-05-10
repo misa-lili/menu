@@ -102,8 +102,12 @@
 		menu.groups = menu.groups;
 	};
 
-	const inputTitle = (event) => {
-		menu.title = event.target.innerText;
+	const handleInputText = (event): string => {
+		const inputText = event.target.innerText;
+		const inputWords = inputText.splice(' ');
+		const newInputText = inputWords.slice(1).join(' ');
+		event.target.innerText = newInputText;
+		return event.target.innerText;
 	};
 
 	const placehold = (event) => {
@@ -284,7 +288,7 @@
 			class:hidden={isGuest && menu.title === ''}
 			contenteditable={!isGuest}
 			on:input={(event) => {
-				menu.title = event.target.innerText;
+				menu.title = handleInputText(event.target.innerText) || '';
 			}}
 			on:blur={(event) => {
 				placehold(event);
@@ -302,7 +306,7 @@
 						placeholder={isGuest ? '' : 'Description'}
 						contenteditable={!isGuest}
 						on:input={(event) => {
-							menu.headers[idx] = event.target.innerText;
+							menu.headers[idx] = handleInputText(event.target.innerText);
 						}}
 						on:blur={placehold}
 					>
@@ -343,7 +347,7 @@
 						placeholder={isGuest ? '' : '그룹 이름'}
 						contenteditable={!isGuest}
 						on:input={(event) => {
-							menu.groups[gidx].name = event.target.innerText;
+							menu.groups[gidx].name = handleInputText(event.target.innerText);
 						}}
 						on:blur={placehold}
 					>
@@ -355,7 +359,7 @@
 						placeholder={isGuest ? '' : '칸 설명'}
 						contenteditable={!isGuest}
 						on:input={(event) => {
-							menu.groups[gidx].col = event.target.innerText;
+							menu.groups[gidx].col = handleInputText(event.target.innerText);
 						}}
 						on:blur={placehold}
 					>
@@ -382,7 +386,7 @@
 									placeholder={isGuest ? '' : '상품 이름'}
 									contenteditable={!isGuest}
 									on:input={(event) => {
-										menu.groups[gidx].items[iidx].name = event.target.innerText;
+										menu.groups[gidx].items[iidx].name = handleInputText(event.target.innerText);
 									}}
 									on:blur={placehold}
 								>
@@ -393,7 +397,7 @@
 									placeholder={isGuest ? '' : '가격'}
 									contenteditable={!isGuest}
 									on:input={(event) => {
-										menu.groups[gidx].items[iidx].price = event.target.innerText;
+										menu.groups[gidx].items[iidx].price = handleInputText(event.target.innerText);
 									}}
 									on:blur={placehold}
 								>
@@ -416,7 +420,9 @@
 								placeholder={isGuest ? '' : '상세 설명'}
 								contenteditable={!isGuest}
 								on:input={(event) => {
-									menu.groups[gidx].items[iidx].description = event.target.innerText;
+									menu.groups[gidx].items[iidx].description = handleInputText(
+										event.target.innerText
+									);
 								}}
 								on:blur={placehold}
 							>
@@ -459,7 +465,7 @@
 					placeholder="Footer"
 					contenteditable={!isGuest}
 					on:input={(event) => {
-						footer = event.target.innerText;
+						footer = handleInputText(event.target.innerText);
 					}}
 					on:blur={placehold}
 				>
