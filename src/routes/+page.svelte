@@ -1,8 +1,14 @@
 <script lang="ts">
+	import jwt_decode from 'jwt-decode';
 	import { fade, slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { goto } from '$app/navigation';
 	import bcrypt from 'bcryptjs';
+	import { onMount } from 'svelte';
+	import { each } from 'svelte/internal';
+
+	let isSiginedIn: boolean = false;
+	let mids: string[] = [];
 
 	let isSignUp: boolean = false;
 
@@ -17,6 +23,19 @@
 
 	let mid: string = '';
 	let isMidError: boolean = false;
+
+	onMount(() => {
+		if (window) {
+			const atoken = window.sessionStorage.getItem('atoken');
+			const rtoken = window.sessionStorage.getItem('rtoken');
+			if (atoken || rtoken) {
+				const payload = jwt_decode(atoken || rtoken);
+				console.log(payload);
+				isSiginedIn = true;
+				mids = payload.mids;
+			}
+		}
+	});
 
 	const toggleSignUp = () => {
 		isSignUp = !isSignUp;
@@ -122,48 +141,31 @@
 		QQUR<span class="text-2xl">(BETA)</span>
 	</div>
 	<hr />
-	<div class="flex flex-col space-y-6">
-		<input
-			type="email"
-			placeholder="이메일"
-			class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
-			class:border-red-400={isEmailError}
-			class:text-red-400={isEmailError}
-			bind:value={email}
-			on:focus={() => {
-				if (isEmailError) {
-					email = '';
-					isEmailError = false;
-				}
-			}}
-		/>
-		<input
-			type="password"
-			placeholder="암호"
-			class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
-			class:border-red-400={isPasswordError}
-			class:text-red-400={isPasswordError}
-			bind:value={password}
-			on:focus={() => {
-				if (isPasswordError) {
-					password = '';
-					password2 = '';
-					isPasswordError = false;
-					isPassword2Error = false;
-				}
-			}}
-		/>
-		{#if isSignUp === true}
+	{#if isSiginedIn === false}
+		<div class="flex flex-col space-y-6">
 			<input
-				transition:fade
-				type="password"
-				placeholder="암호 재입력"
+				type="email"
+				placeholder="이메일"
 				class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
-				class:border-red-400={isPassword2Error}
-				class:text-red-400={isPassword2Error}
-				bind:value={password2}
+				class:border-red-400={isEmailError}
+				class:text-red-400={isEmailError}
+				bind:value={email}
 				on:focus={() => {
-					if (isPassword2Error) {
+					if (isEmailError) {
+						email = '';
+						isEmailError = false;
+					}
+				}}
+			/>
+			<input
+				type="password"
+				placeholder="암호"
+				class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
+				class:border-red-400={isPasswordError}
+				class:text-red-400={isPasswordError}
+				bind:value={password}
+				on:focus={() => {
+					if (isPasswordError) {
 						password = '';
 						password2 = '';
 						isPasswordError = false;
@@ -171,38 +173,65 @@
 					}
 				}}
 			/>
+			{#if isSignUp === true}
+				<input
+					transition:fade
+					type="password"
+					placeholder="암호 재입력"
+					class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
+					class:border-red-400={isPassword2Error}
+					class:text-red-400={isPassword2Error}
+					bind:value={password2}
+					on:focus={() => {
+						if (isPassword2Error) {
+							password = '';
+							password2 = '';
+							isPasswordError = false;
+							isPassword2Error = false;
+						}
+					}}
+				/>
+				<input
+					transition:fade
+					type="text"
+					placeholder="메뉴 아이디 (가입 이후 수정 가능)"
+					class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
+					class:border-red-400={isMidError}
+					class:text-red-400={isMidError}
+					bind:value={mid}
+					on:focus={() => {
+						if (isMidError) {
+							mid = '';
+							isMidError = false;
+						}
+					}}
+				/>
+			{/if}
 			<input
-				transition:fade
-				type="text"
-				placeholder="메뉴 아이디 (가입 이후 수정 가능)"
-				class="font-extralight bg-stone-100 rounded-full p-3 px-5 border"
-				class:border-red-400={isMidError}
-				class:text-red-400={isMidError}
-				bind:value={mid}
-				on:focus={() => {
-					if (isMidError) {
-						mid = '';
-						isMidError = false;
-					}
+				type="button"
+				class="font-extralight h-12 rounded-full bg-black text-white px-3 cursor-pointer"
+				value={isSignUp ? '회원가입' : '로그인'}
+				on:click={() => {
+					if (isSignUp) signUp();
+					else signIn();
 				}}
 			/>
-		{/if}
-		<input
-			type="button"
-			class="font-extralight h-12 rounded-full bg-black text-white px-3 cursor-pointer"
-			value={isSignUp ? '회원가입' : '로그인'}
-			on:click={() => {
-				if (isSignUp) signUp();
-				else signIn();
-			}}
-		/>
-		<div class="font-extralight text-center">
-			{isSignUp ? '이미 회원이세요?' : '뀨알이 처음이세요?'}
-			<a on:click={toggleSignUp} class="cursor-pointer text-blue-500 font-medium"
-				>{isSignUp ? '로그인' : '가입'}</a
-			>하러 갈게요.
+			<div class="font-extralight text-center">
+				{isSignUp ? '이미 회원이세요?' : '뀨알이 처음이세요?'}
+				<a on:click={toggleSignUp} class="cursor-pointer text-blue-500 font-medium"
+					>{isSignUp ? '로그인' : '가입'}</a
+				>하러 갈게요.
+			</div>
 		</div>
-	</div>
+	{:else}
+		<div class="text-center">
+			<div>로그인 되었습니다.</div>
+			{#each mids as mid (mid)}
+				<span class="text-blue-500 cursor-pointer" on:click={() => goto(`/${mid}`)}>{mid}</span>
+				메뉴 바로가기
+			{/each}
+		</div>
+	{/if}
 	<hr />
 	<div>
 		<header>
