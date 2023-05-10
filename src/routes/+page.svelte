@@ -113,6 +113,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>qqur.app</title>
+</svelte:head>
+
 <div class="py-9 px-6 space-y-9">
 	<div class="text-center text-6xl font-bold font-mono">
 		QQUR<span class="text-2xl">(BETA)</span>

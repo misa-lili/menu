@@ -202,6 +202,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>{$page.params.mid || menu.title || 'qqur.app'}</title>
+</svelte:head>
+
 <dialog class="bg-white/50 fixed w-full h-full" open={isExpired}>
 	<div class="bg-white border rounded-3xl flex flex-col space-y-6 px-3 pt-3 pb-12">
 		<div class="flex justify-end">
