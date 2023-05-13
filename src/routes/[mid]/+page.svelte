@@ -26,22 +26,27 @@
 	import { goto } from '$app/navigation';
 	import Qr from '$lib/QR.svelte';
 
+	import { flip } from 'svelte/animate';
+	import { fade } from 'svelte/transition';
+	import { init } from 'svelte/internal';
+
+	let isMounted: boolean = false;
+
 	let menu: Menu = {
 		title: '',
 		footers: [],
 		groups: [],
 		headers: []
 	};
-
-	$: {
-		menu = data.body;
+	$: if (isMounted && menu) {
+		relayout();
 	}
 
 	let isGuest: boolean = true;
 	let isOwner: boolean = false;
 	let isExpired: boolean = false;
 
-	let Masonry;
+	let Masonry = null;
 	let masonry;
 
 	let email: string = '';
@@ -51,6 +56,23 @@
 	let isPasswordError: boolean = false;
 
 	onMount(async () => {
+		isMounted = true;
+
+		menu = {
+			...(data.body as Menu),
+			groups: (data.body as Menu).groups.reduce((acc, cur) => {
+				acc = [
+					...acc,
+					{
+						...cur,
+						id: crypto.randomUUID(),
+						items: cur.items.map((i) => ({ ...i, id: crypto.randomUUID() }))
+					}
+				];
+				return acc;
+			}, [])
+		};
+
 		await initMasonry();
 
 		if (menu?.title && window && document) {
@@ -74,6 +96,10 @@
 		});
 	};
 
+	const relayout = () => {
+		initMasonry();
+	};
+
 	const toggleEdit = async (value?: boolean) => {
 		if (value === true) {
 			isGuest = false;
@@ -82,16 +108,15 @@
 		} else {
 			isGuest = !isGuest;
 		}
-
-		if (isGuest) {
-			await initMasonry();
-		} else {
-			masonry.destroy();
-		}
 	};
 
 	const addHeader = () => {
 		menu.headers = [...menu.headers, ''];
+	};
+
+	const addGroup = () => {
+		menu.groups = [...menu.groups, { name: '안녕', id: crypto.randomUUID(), items: [] }];
+		menu.groups = menu.groups;
 	};
 
 	const addItem = (group) => {
@@ -101,10 +126,10 @@
 				name: '',
 				price: '',
 				description: '',
-				image: ''
+				image: '',
+				id: crypto.randomUUID()
 			}
 		];
-
 		menu.groups = menu.groups;
 	};
 
@@ -136,6 +161,7 @@
 		isSaving = true;
 		const mid = window.location.pathname.slice(1);
 
+		// TODO: SAVE WITHOUT ID
 		const result = await fetch(`/api/v1/menus?key=${mid}`, {
 			method: 'PUT',
 			headers: {
@@ -348,8 +374,13 @@
 	</div>
 
 	<div class="_groups m-container">
-		{#each menu.groups as group, gidx (gidx)}
-			<div class="_group m-card w-full sm:w-[calc(100%/2-30px)] flex flex-col">
+		{#each menu.groups as group, gidx (group.id)}
+			<div
+				class="_group m-card w-full sm:w-[calc(100%/2-30px)] flex flex-col"
+				in:fade|local={{ delay: 100, duration: 200 }}
+				out:fade|local={{ delay: 0, duration: 200 }}
+				animate:flip={200}
+			>
 				<div class="flex items-end">
 					<div
 						class="_group_name uppercase flex-1"
@@ -387,8 +418,13 @@
 						</div>
 					</div>
 				</div>
-				{#each group.items as item, iidx (iidx)}
-					<div class="flex">
+				{#each group.items as item, iidx (item.id)}
+					<div
+						class="flex"
+						in:fade|local={{ delay: 100, duration: 200 }}
+						out:fade|local={{ delay: 0, duration: 200 }}
+						animate:flip={200}
+					>
 						<div class="_item flex-grow flex flex-col">
 							<div class="flex">
 								<div
@@ -462,13 +498,11 @@
 				</div>
 			</div>
 		{/each}
-		<div>
+		<div class="_group m-card w-full sm:w-[calc(100%/2-30px)] flex flex-col">
 			<div
 				class="inline-block space-x-1 text-sm items-center cursor-pointer text-violet-500 hover:text-violet-400"
 				class:hidden={isGuest}
-				on:click={() => {
-					menu.groups = [...menu.groups, { name: '', items: [] }];
-				}}
+				on:click={addGroup}
 			>
 				<Icon src={FolderPlus} class="w-6 h-6" />
 			</div>
