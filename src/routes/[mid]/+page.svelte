@@ -428,7 +428,8 @@
 						<div class="_item flex-grow flex flex-col">
 							<div class="flex">
 								<div
-									class="_item_name uppercase"
+									class="_item_name uppercase text-black"
+									class:text-opacity-30={item.out}
 									class:line-through={item.out}
 									placeholder={isGuest ? '' : '상품 이름'}
 									contenteditable={!isGuest}
