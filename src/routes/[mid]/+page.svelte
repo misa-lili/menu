@@ -26,7 +26,12 @@
 	import { goto } from '$app/navigation';
 	import Qr from '$lib/QR.svelte';
 
-	let menu: Menu;
+	let menu: Menu = {
+		title: '',
+		footers: [],
+		groups: [],
+		headers: []
+	};
 
 	$: {
 		menu = data.body;
@@ -48,7 +53,7 @@
 	onMount(async () => {
 		await initMasonry();
 
-		if (menu.title && window && document) {
+		if (menu?.title && window && document) {
 			insertImage();
 		}
 
