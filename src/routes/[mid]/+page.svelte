@@ -275,7 +275,15 @@
 	<title>{$page.params.mid || menu.title || 'qqur.app'}</title>
 </svelte:head>
 
-<Toolbar bind:menu bind:selected on:relayout={relayout} on:save={save} />
+{#if isOwner}
+	<Toolbar
+		bind:menu
+		bind:selected
+		on:relayout={relayout}
+		on:save={save}
+		on:toggleEdit={toggleEdit}
+	/>
+{/if}
 
 <dialog class="bg-white/50 fixed w-full h-full" open={isExpired}>
 	<div class="bg-white border rounded-3xl flex flex-col space-y-6 px-3 pt-3 pb-12">

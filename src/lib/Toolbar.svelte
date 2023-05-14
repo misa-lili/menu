@@ -4,16 +4,10 @@
 		Trash,
 		ArrowUp,
 		ArrowDown,
-		PlusCircle,
 		Plus,
-		FolderPlus,
 		CloudArrowUp,
-		UserGroup,
-		Cog6Tooth,
-		Bolt,
 		LockClosed,
 		LockOpen,
-		XMark,
 		MinusCircle
 	} from 'svelte-hero-icons';
 	import { createEventDispatcher } from 'svelte';
@@ -22,8 +16,7 @@
 
 	export let menu: Menu | null = null;
 	export let selected: Selected | null = null;
-
-	let isGuest = false;
+	export let isGuest = false;
 
 	/**
 	 * TITLE
@@ -105,10 +98,13 @@
 		menu = menu;
 		dispatch('relayout');
 	};
+	const toggleEdit = () => {
+		dispatch('toggleEdit');
+	};
 </script>
 
 <div
-	class="_toolbar fixed z-50 flex w-full bottom-3 mx-auto justify-center"
+	class="_toolbar fixed z-50 flex w-full bottom-3 left-0 mx-auto justify-center"
 	on:mousedown|preventDefault
 	on:touchstart|preventDefault
 >
@@ -116,11 +112,13 @@
 		<div on:click={save}>
 			<Icon src={CloudArrowUp} class="w-6 h-6 cursor-pointer" />
 		</div>
-		{#if isGuest}
-			<Icon src={LockOpen} class="w-6 h-6 cursor-pointer" />
-		{:else}
-			<Icon src={LockClosed} class="w-6 h-6 cursor-pointer" />
-		{/if}
+		<div on:click={toggleEdit}>
+			{#if isGuest}
+				<Icon src={LockOpen} class="w-6 h-6 cursor-pointer" />
+			{:else}
+				<Icon src={LockClosed} class="w-6 h-6 cursor-pointer" />
+			{/if}
+		</div>
 		{#if selected !== null}
 			<span class="px-2 opacity-50 cursor-default">|</span>
 		{/if}
