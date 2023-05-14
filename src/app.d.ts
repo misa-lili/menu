@@ -8,26 +8,37 @@ declare global {
 		// interface Platform {}
 	}
 
+	type Selected = {
+		type: 'title' | 'header' | 'group' | 'item' | 'footer';
+		gidx?: number;
+		idx: number;
+		data: any;
+	};
+
+	type Title = { value: string };
+	type Header = { id?: string; value: string };
+	type Group = {
+		id?: string;
+		name: string;
+		col?: string;
+		items: Item[];
+	};
+	type Item = {
+		id?: string;
+		name: string;
+		price: string;
+		description?: string;
+		image?: string;
+		out?: boolean;
+	};
+	type Footer = { id?: string; value: string };
+
 	// key is mid
 	type Menu = {
-		title: string;
-		headers: [string];
-		footers: [string];
-		groups: [
-			{
-				name: string;
-				col?: string;
-				items: [
-					{
-						name: string;
-						price: string;
-						description?: string;
-						image?: string;
-						out?: boolean;
-					}
-				];
-			}
-		];
+		title: Title;
+		headers: Header[];
+		groups: Group[];
+		footers: Footer[];
 	};
 
 	/** key is email */

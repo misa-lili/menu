@@ -1,6 +1,6 @@
 <script lang="ts">
 	/** @type {import('./$types').PageData} */
-	export let data;
+	export let data: { body: Menu };
 
 	import {
 		Icon,
@@ -28,19 +28,31 @@
 
 	import { flip } from 'svelte/animate';
 	import { fade } from 'svelte/transition';
-	import { init } from 'svelte/internal';
+	import Toolbar from '$lib/Toolbar.svelte';
 
 	let isMounted: boolean = false;
 
 	let menu: Menu = {
-		title: '',
+		title: { value: '' },
 		footers: [],
 		groups: [],
 		headers: []
 	};
-	$: if (isMounted && menu) {
+
+	$: if (isMounted & menu) {
 		relayout();
 	}
+
+	let selected: Selected | null = null;
+
+	const select = (parameters: { type: string; gidx?: number; idx?: number; data: any }) => {
+		selected = parameters;
+	};
+
+	const unselect = () => {
+		selected = null;
+		relayout();
+	};
 
 	let isGuest: boolean = true;
 	let isOwner: boolean = false;
@@ -59,8 +71,14 @@
 		isMounted = true;
 
 		menu = {
-			...(data.body as Menu),
-			groups: (data.body as Menu).groups.reduce((acc, cur) => {
+			...data.body,
+			title: typeof data.body.title === 'string' ? { value: data.body.title } : data.body.title,
+			headers: data.body.headers.map((header) =>
+				typeof header === 'string'
+					? { id: crypto.randomUUID(), value: header }
+					: { ...header, id: crypto.randomUUID() }
+			),
+			groups: data.body.groups.reduce((acc, cur) => {
 				acc = [
 					...acc,
 					{
@@ -70,12 +88,16 @@
 					}
 				];
 				return acc;
-			}, [])
+			}, []),
+			footers: data.body.footers.map((footer) => {
+				if (typeof footer === 'string') return { id: crypto.randomUUID(), value: footer };
+				else return { ...footer, id: crypto.randomUUID() };
+			})
 		};
 
 		await initMasonry();
 
-		if (menu?.title && window && document) {
+		if (menu?.title.value && window && document) {
 			insertImage();
 		}
 
@@ -96,8 +118,9 @@
 		});
 	};
 
-	const relayout = () => {
-		initMasonry();
+	const relayout = async () => {
+		console.log('relayout');
+		await initMasonry();
 	};
 
 	const toggleEdit = async (value?: boolean) => {
@@ -111,11 +134,11 @@
 	};
 
 	const addHeader = () => {
-		menu.headers = [...menu.headers, ''];
+		menu.headers = [...menu.headers, { id: crypto.randomUUID(), value: '' }];
 	};
 
 	const addGroup = () => {
-		menu.groups = [...menu.groups, { name: '안녕', id: crypto.randomUUID(), items: [] }];
+		menu.groups = [...menu.groups, { name: '', id: crypto.randomUUID(), items: [] }];
 		menu.groups = menu.groups;
 	};
 
@@ -133,12 +156,13 @@
 		menu.groups = menu.groups;
 	};
 
-	const handleInputText = (event): string => {
-		const inputText = event.target.innerText;
-		const inputWords = inputText.splice(' ');
-		const newInputText = inputWords.slice(1).join(' ');
-		event.target.innerText = newInputText;
-		return event.target.innerText;
+	const addFooter = () => {
+		menu.footers = [...menu.footers, { id: crypto.randomUUID(), value: '' }];
+	};
+
+	const handleInputText = (event: InputEvent): string => {
+		console.log(selected.data);
+		return event.target.innerText || event.target.innerHTML;
 	};
 
 	const placehold = (event) => {
@@ -149,8 +173,8 @@
 
 	const insertImage = () => {
 		const target = document.querySelector('._title');
-		if (/^https?:\/\//.test(menu.title) && target) {
-			target.innerHTML = `<img src="${menu.title.trim()}">`;
+		if (/^https?:\/\//.test(menu.title.value) && target) {
+			target.innerHTML = `<img src="${menu.title.value.trim()}">`;
 		}
 		// https://i.imgur.com/ji9VuwA.jpeg
 	};
@@ -211,32 +235,13 @@
 			isExpired = false;
 		} else alert('회원 정보를 확인해 주세요');
 	};
-
-	const splice = (arr: any[], idx: number) => {
-		arr.splice(idx, 1);
-		menu = menu;
-	};
-
-	const swapOrder = (arr: any[], idx: number, next: boolean) => {
-		const length = arr.length;
-		if (idx === length - 1 && next === true) return;
-		if (idx === 0 && next === false) return;
-		if (next === true) {
-			const temp = JSON.parse(JSON.stringify(arr[idx + 1]));
-			arr[idx + 1] = JSON.parse(JSON.stringify(arr[idx]));
-			arr[idx] = temp;
-		} else {
-			const temp = JSON.parse(JSON.stringify(arr[idx - 1]));
-			arr[idx - 1] = JSON.parse(JSON.stringify(arr[idx]));
-			arr[idx] = temp;
-		}
-		menu = menu;
-	};
 </script>
 
 <svelte:head>
 	<title>{$page.params.mid || menu.title || 'qqur.app'}</title>
 </svelte:head>
+
+<Toolbar bind:menu bind:selected on:relayout={relayout} on:save={save} />
 
 <dialog class="bg-white/50 fixed w-full h-full" open={isExpired}>
 	<div class="bg-white border rounded-3xl flex flex-col space-y-6 px-3 pt-3 pb-12">
@@ -291,25 +296,6 @@
 	</div>
 </dialog>
 
-<div class="flex space-x-1" class:hidden={!isOwner}>
-	<div class="cursor-pointer text-orange-500 hover:text-orange-400" on:click={save}>
-		<Icon src={CloudArrowUp} class="w-6 h-6" />
-	</div>
-	<div
-		class="cursor-pointer text-orange-500 hover:text-orange-400"
-		on:click={() => {
-			// isGuest = !isGuest;
-			toggleEdit();
-		}}
-	>
-		{#if isGuest}
-			<Icon src={LockOpen} class="w-6 h-6" />
-		{:else}
-			<Icon src={LockClosed} class="w-6 h-6" />
-		{/if}
-	</div>
-</div>
-
 <div
 	class="
 		_template flex flex-col space-y-4
@@ -319,45 +305,40 @@
 >
 	<div class="_header_container flex flex-col">
 		<div
-			class="_title"
+			class="_title mb-6"
 			placeholder={isGuest ? '' : 'Title'}
-			class:hidden={isGuest && menu.title === ''}
 			contenteditable={!isGuest}
+			on:focus={() => select({ type: 'title', idx: 0, data: menu.title })}
+			class:ring={selected?.type === 'title'}
 			on:input={(event) => {
-				menu.title = handleInputText(event.target.innerText) || '';
+				menu.title.value = handleInputText(event);
 			}}
 			on:blur={(event) => {
 				placehold(event);
 				insertImage();
+				unselect();
 			}}
 		>
-			{menu.title}
+			{menu.title.value}
 		</div>
-		{#each menu.headers as header, idx (idx)}
+		{#each menu.headers as header, idx (header.id)}
 			<div class="flex">
 				<div class="flex-1">
 					<div
 						class="_header"
-						class:hidden={isGuest && header === ''}
 						placeholder={isGuest ? '' : 'Description'}
 						contenteditable={!isGuest}
+						on:focus={() => select({ type: 'header', idx, data: header })}
+						class:ring={selected?.type === 'header' && selected?.idx === idx}
 						on:input={(event) => {
-							menu.headers[idx] = handleInputText(event.target.innerText);
+							header.value = handleInputText(event) || '';
 						}}
-						on:blur={placehold}
+						on:blur={(event) => {
+							placehold(event);
+							unselect();
+						}}
 					>
-						{header}
-					</div>
-				</div>
-				<div class="_xud" class:hidden={isGuest} class:flex={!isGuest}>
-					<div on:click={() => splice(menu.headers, idx)}>
-						<Icon src={Trash} class="w-6 h-6" />
-					</div>
-					<div on:click={() => swapOrder(menu.headers, idx, false)}>
-						<Icon src={ArrowUp} class="w-6 h-6" />
-					</div>
-					<div on:click={() => swapOrder(menu.headers, idx, true)}>
-						<Icon src={ArrowDown} class="w-6 h-6" />
+						{header.value}
 					</div>
 				</div>
 			</div>
@@ -380,17 +361,22 @@
 				in:fade|local={{ delay: 100, duration: 200 }}
 				out:fade|local={{ delay: 0, duration: 200 }}
 				animate:flip={200}
+				class:ring={selected?.type === 'group' && selected?.idx === gidx}
 			>
 				<div class="flex items-end">
 					<div
-						class="_group_name uppercase flex-1"
+						class="_group_name flex-1"
 						class:hidden={isGuest && group === ''}
 						placeholder={isGuest ? '' : '그룹 이름'}
 						contenteditable={!isGuest}
+						on:focus={() => select({ type: 'group', idx: gidx, data: group })}
 						on:input={(event) => {
-							menu.groups[gidx].name = handleInputText(event.target.innerText);
+							menu.groups[gidx].name = handleInputText(event);
 						}}
-						on:blur={placehold}
+						on:blur={(event) => {
+							placehold(event);
+							unselect();
+						}}
 					>
 						{group.name}
 					</div>
@@ -399,23 +385,16 @@
 						class:hidden={isGuest && !group.col}
 						placeholder={isGuest ? '' : '칸 설명'}
 						contenteditable={!isGuest}
+						on:focus={() => select({ type: 'group', idx: gidx, data: group })}
 						on:input={(event) => {
-							menu.groups[gidx].col = handleInputText(event.target.innerText);
+							menu.groups[gidx].col = handleInputText(event);
 						}}
-						on:blur={placehold}
+						on:blur={(event) => {
+							placehold(event);
+							unselect();
+						}}
 					>
 						{group.col ? group.col : ''}
-					</div>
-					<div class="_xud" class:hidden={isGuest} class:flex={!isGuest}>
-						<div on:click={() => splice(menu.groups, gidx)}>
-							<Icon src={Trash} class="w-6 h-6" />
-						</div>
-						<div on:click={() => swapOrder(menu.groups, gidx, false)}>
-							<Icon src={ArrowUp} class="w-6 h-6" />
-						</div>
-						<div on:click={() => swapOrder(menu.groups, gidx, true)}>
-							<Icon src={ArrowDown} class="w-6 h-6" />
-						</div>
 					</div>
 				</div>
 				{#each group.items as item, iidx (item.id)}
@@ -425,18 +404,27 @@
 						out:fade|local={{ delay: 0, duration: 200 }}
 						animate:flip={200}
 					>
-						<div class="_item flex-grow flex flex-col">
+						<div
+							class="_item flex-grow flex flex-col"
+							class:ring={selected?.type === 'item' &&
+								selected?.gidx === gidx &&
+								selected?.idx === iidx}
+						>
 							<div class="flex">
 								<div
-									class="_item_name uppercase text-black"
+									class="_item_name text-black"
 									class:text-opacity-30={item.out}
 									class:line-through={item.out}
 									placeholder={isGuest ? '' : '상품 이름'}
 									contenteditable={!isGuest}
+									on:focus={() => select({ type: 'item', gidx, idx: iidx, data: item })}
 									on:input={(event) => {
-										menu.groups[gidx].items[iidx].name = handleInputText(event.target.innerText);
+										menu.groups[gidx].items[iidx].name = handleInputText(event);
 									}}
-									on:blur={placehold}
+									on:blur={(event) => {
+										placehold(event);
+										unselect();
+									}}
 								>
 									{item.name}
 								</div>
@@ -444,42 +432,30 @@
 									class="_item_price font-mono text-right"
 									placeholder={isGuest ? '' : '가격'}
 									contenteditable={!isGuest}
+									on:focus={() => select({ type: 'item', gidx, idx: iidx, data: item })}
 									on:input={(event) => {
-										menu.groups[gidx].items[iidx].price = handleInputText(event.target.innerText);
+										menu.groups[gidx].items[iidx].price = handleInputText(event);
 									}}
-									on:blur={placehold}
+									on:blur={(event) => {
+										placehold(event);
+										unselect();
+									}}
 								>
 									{item.price}
-								</div>
-								<div class="_xud__pink" class:hidden={isGuest} class:flex={!isGuest}>
-									<div on:click={() => splice(menu.groups[gidx].items, iidx)}>
-										<Icon src={Trash} class="w-6 h-6" />
-									</div>
-									<div
-										on:click={() => {
-											menu.groups[gidx].items[iidx].out = !!!menu.groups[gidx].items[iidx].out;
-										}}
-									>
-										<Icon src={MinusCircle} class="w-6 h-6" />
-									</div>
-									<div on:click={() => swapOrder(menu.groups[gidx].items, iidx, false)}>
-										<Icon src={ArrowUp} class="w-6 h-6" />
-									</div>
-									<div on:click={() => swapOrder(menu.groups[gidx].items, iidx, true)}>
-										<Icon src={ArrowDown} class="w-6 h-6" />
-									</div>
 								</div>
 							</div>
 							<div
 								class="_description text-sm"
 								placeholder={isGuest ? '' : '상세 설명'}
 								contenteditable={!isGuest}
+								on:focus={() => select({ type: 'item', gidx, idx: iidx, data: item })}
 								on:input={(event) => {
-									menu.groups[gidx].items[iidx].description = handleInputText(
-										event.target.innerText
-									);
+									menu.groups[gidx].items[iidx].description = handleInputText(event);
 								}}
-								on:blur={placehold}
+								on:blur={(event) => {
+									placehold(event);
+									unselect();
+								}}
 							>
 								{item.description}
 							</div>
@@ -511,30 +487,23 @@
 	</div>
 
 	<div class="_footer_container flex flex-col">
-		{#each menu.footers as footer, idx (idx)}
+		{#each menu.footers as footer, idx (footer.id)}
 			<div class="flex">
 				<div
 					class="_footer flex-1"
 					placeholder="Footer"
 					contenteditable={!isGuest}
+					on:focus={() => select({ type: 'footer', idx, data: footer })}
+					class:ring={selected?.type === 'footer' && selected?.idx === idx}
 					on:input={(event) => {
-						footer = handleInputText(event.target.innerText);
+						footer.value = handleInputText(event);
 					}}
-					on:blur={placehold}
+					on:blur={(event) => {
+						placehold(event);
+						unselect();
+					}}
 				>
-					{footer}
-				</div>
-
-				<div class="_xud" class:hidden={isGuest} class:flex={!isGuest}>
-					<div on:click={() => splice(menu.footers, idx)}>
-						<Icon src={Trash} class="w-6 h-6" />
-					</div>
-					<div on:click={() => swapOrder(menu.footers, idx, false)}>
-						<Icon src={ArrowUp} class="w-6 h-6" />
-					</div>
-					<div on:click={() => swapOrder(menu.footers, idx, true)}>
-						<Icon src={ArrowDown} class="w-6 h-6" />
-					</div>
+					{footer.value}
 				</div>
 			</div>
 		{/each}
@@ -564,12 +533,15 @@
 	/* div {
 		@apply border border-slate-500 p-2;
 	} */
+	div {
+		@apply ring-pink-400 ring-offset-4;
+	}
 	div:focus {
 		@apply outline-none;
 	}
 
 	._xud {
-		@apply text-violet-500;
+		@apply text-violet-500 hidden;
 	}
 
 	._xud > div {
@@ -577,7 +549,7 @@
 	}
 
 	._xud__pink {
-		@apply text-pink-500;
+		@apply text-pink-500 hidden;
 	}
 	._xud__pink > div {
 		@apply hover:text-pink-400 cursor-pointer;
@@ -608,7 +580,7 @@
 	}
 
 	._group_name {
-		@apply uppercase font-medium text-3xl font-mono;
+		@apply font-medium text-3xl font-mono;
 	}
 
 	._item {
@@ -616,7 +588,7 @@
 	}
 
 	._item_name {
-		@apply basis-auto flex-grow text-xl uppercase decoration-slice;
+		@apply basis-auto flex-grow text-xl decoration-slice;
 	}
 
 	._item_price {
