@@ -200,13 +200,32 @@
 		isSaving = true;
 		const mid = window.location.pathname.slice(1);
 
-		// TODO: SAVE WITHOUT ID
+		let menuWithoutId: Menu = JSON.parse(JSON.stringify(menu));
+		menuWithoutId.headers = menuWithoutId.headers.map((h) => {
+			delete h.id;
+			return h;
+		});
+		menuWithoutId.footers = menuWithoutId.footers.map((f) => {
+			delete f.id;
+			return f;
+		});
+		menuWithoutId.groups = menuWithoutId.groups.map((g) => {
+			delete g.id;
+
+			g.items = g.items.map((i) => {
+				delete i.id;
+				return i;
+			});
+
+			return g;
+		});
+
 		const result = await fetch(`/api/v1/menus?key=${mid}`, {
 			method: 'PUT',
 			headers: {
 				Authorization: 'Bearer ' + window.sessionStorage.getItem('atoken')
 			},
-			body: JSON.stringify(menu)
+			body: JSON.stringify(menuWithoutId)
 		})
 			.then((r) => r.json())
 			.catch((error) => {
@@ -220,7 +239,7 @@
 				headers: {
 					Authorization: 'Bearer ' + window.sessionStorage.getItem('rtoken')
 				},
-				body: JSON.stringify(menu)
+				body: JSON.stringify(menuWithoutId)
 			})
 				.then((r) => r.json())
 				.catch((error) => {
