@@ -161,15 +161,7 @@
 	};
 
 	const handleInputText = (e: InputEvent): string => {
-		const div = event.target;
-		const caret = window.getSelection().getRangeAt(0).cloneRange().startOffset;
-		div.focus();
-		const range = document.createRange();
-		range.setStart(div.firstChild, caret);
-		const sel = window.getSelection();
-		sel.removeAllRanges();
-		sel.addRange(range);
-		return e.target.textContent;
+		return e.target.innerText;
 	};
 
 	const onKeyDown = (e: KeyboardEvent) => {
@@ -375,7 +367,7 @@
 						on:focus={(event) => select(event, { type: 'header', idx, data: header })}
 						class:ring={selected?.type === 'header' && selected?.idx === idx}
 						on:input={(event) => {
-							header.value = handleInputText(event) || '';
+							header.value = handleInputText(event);
 						}}
 						on:blur={(event) => {
 							placehold(event);
