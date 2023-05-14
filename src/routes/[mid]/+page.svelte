@@ -39,13 +39,13 @@
 		headers: []
 	};
 
-	$: if (isMounted & menu) {
-		relayout();
-	}
+	// $: if (isMounted & menu) {
+	// 	relayout();
+	// }
 
 	let selected: Selected | null = null;
 
-	const select = (parameters: { type: string; gidx?: number; idx?: number; data: any }) => {
+	const select = (event, parameters: { type: string; gidx?: number; idx?: number; data: any }) => {
 		selected = parameters;
 	};
 
@@ -160,9 +160,24 @@
 		menu.footers = [...menu.footers, { id: crypto.randomUUID(), value: '' }];
 	};
 
-	const handleInputText = (event: InputEvent): string => {
-		console.log(selected.data);
-		return event.target.innerText || event.target.innerHTML;
+	const handleInputText = (e: InputEvent): string => {
+		const div = event.target;
+		const caret = window.getSelection().getRangeAt(0).cloneRange().startOffset;
+		div.focus();
+		const range = document.createRange();
+		range.setStart(div.firstChild, caret);
+		const sel = window.getSelection();
+		sel.removeAllRanges();
+		sel.addRange(range);
+		return e.target.textContent;
+	};
+
+	const onKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			e.stopPropagation();
+		}
 	};
 
 	const placehold = (event) => {
@@ -308,7 +323,8 @@
 			class="_title mb-6"
 			placeholder={isGuest ? '' : 'Title'}
 			contenteditable={!isGuest}
-			on:focus={() => select({ type: 'title', idx: 0, data: menu.title })}
+			on:keydown={onKeyDown}
+			on:focus={(event) => select(event, { type: 'title', idx: 0, data: menu.title })}
 			class:ring={selected?.type === 'title'}
 			on:input={(event) => {
 				menu.title.value = handleInputText(event);
@@ -328,7 +344,8 @@
 						class="_header"
 						placeholder={isGuest ? '' : 'Description'}
 						contenteditable={!isGuest}
-						on:focus={() => select({ type: 'header', idx, data: header })}
+						on:keydown={onKeyDown}
+						on:focus={(event) => select(event, { type: 'header', idx, data: header })}
 						class:ring={selected?.type === 'header' && selected?.idx === idx}
 						on:input={(event) => {
 							header.value = handleInputText(event) || '';
@@ -369,7 +386,8 @@
 						class:hidden={isGuest && group === ''}
 						placeholder={isGuest ? '' : '그룹 이름'}
 						contenteditable={!isGuest}
-						on:focus={() => select({ type: 'group', idx: gidx, data: group })}
+						on:keydown={onKeyDown}
+						on:focus={(event) => select(event, { type: 'group', idx: gidx, data: group })}
 						on:input={(event) => {
 							menu.groups[gidx].name = handleInputText(event);
 						}}
@@ -385,7 +403,8 @@
 						class:hidden={isGuest && !group.col}
 						placeholder={isGuest ? '' : '칸 설명'}
 						contenteditable={!isGuest}
-						on:focus={() => select({ type: 'group', idx: gidx, data: group })}
+						on:keydown={onKeyDown}
+						on:focus={(event) => select(event, { type: 'group', idx: gidx, data: group })}
 						on:input={(event) => {
 							menu.groups[gidx].col = handleInputText(event);
 						}}
@@ -417,7 +436,8 @@
 									class:line-through={item.out}
 									placeholder={isGuest ? '' : '상품 이름'}
 									contenteditable={!isGuest}
-									on:focus={() => select({ type: 'item', gidx, idx: iidx, data: item })}
+									on:keydown={onKeyDown}
+									on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
 									on:input={(event) => {
 										menu.groups[gidx].items[iidx].name = handleInputText(event);
 									}}
@@ -432,7 +452,8 @@
 									class="_item_price font-mono text-right"
 									placeholder={isGuest ? '' : '가격'}
 									contenteditable={!isGuest}
-									on:focus={() => select({ type: 'item', gidx, idx: iidx, data: item })}
+									on:keydown={onKeyDown}
+									on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
 									on:input={(event) => {
 										menu.groups[gidx].items[iidx].price = handleInputText(event);
 									}}
@@ -448,7 +469,8 @@
 								class="_description text-sm"
 								placeholder={isGuest ? '' : '상세 설명'}
 								contenteditable={!isGuest}
-								on:focus={() => select({ type: 'item', gidx, idx: iidx, data: item })}
+								on:keydown={onKeyDown}
+								on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
 								on:input={(event) => {
 									menu.groups[gidx].items[iidx].description = handleInputText(event);
 								}}
@@ -493,7 +515,8 @@
 					class="_footer flex-1"
 					placeholder="Footer"
 					contenteditable={!isGuest}
-					on:focus={() => select({ type: 'footer', idx, data: footer })}
+					on:keydown={onKeyDown}
+					on:focus={(event) => select(event, { type: 'footer', idx, data: footer })}
 					class:ring={selected?.type === 'footer' && selected?.idx === idx}
 					on:input={(event) => {
 						footer.value = handleInputText(event);
@@ -561,7 +584,7 @@
 
 	[placeholder]:empty::before {
 		content: attr(placeholder);
-		color: #aaa;
+		color: #bbb;
 	}
 
 	[placeholder]:empty:focus::before {
