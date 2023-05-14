@@ -354,7 +354,7 @@
 			on:focus={(event) => select(event, { type: 'title', idx: 0, data: menu.title })}
 			class:ring={selected?.type === 'title'}
 			on:input={(event) => {
-				menu.title.value = handleInputText(event);
+				menu.title.value = event.target.innerText;
 			}}
 			on:blur={(event) => {
 				placehold(event);
