@@ -278,7 +278,7 @@
 	/>
 {/if}
 
-<dialog class="bg-white/50 fixed w-full h-full" open={isExpired}>
+<dialog class="bg-white/50 fixed top-0 w-full h-full" open={isExpired}>
 	<div class="bg-white border rounded-3xl flex flex-col space-y-6 px-3 pt-3 pb-12">
 		<div class="flex justify-end">
 			<div
