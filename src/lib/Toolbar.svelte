@@ -108,100 +108,98 @@
 </script>
 
 <div
-	class="_toolbar fixed z-50 flex w-full bottom-3 left-0 mx-auto justify-center pointer-events-none"
+	class="_toolbar fixed z-50 flex w-full bottom-3 left-0 mx-auto justify-center p-2 bg-pink-400 text-white gap-1 rounded-xl"
 >
-	<div class="flex p-2 justify-center bg-pink-400 text-white gap-1 rounded-xl pointer-events-auto">
-		<div on:click|preventDefault={save} on:touchend|preventDefault={save}>
-			<Icon src={CloudArrowUp} class="w-6 h-6 cursor-pointer" />
-		</div>
-		<div on:click|preventDefault={toggleEdit} on:touchend|preventDefault={toggleEdit}>
-			{#if isGuest}
-				<Icon src={LockOpen} class="w-6 h-6 cursor-pointer" />
-			{:else}
-				<Icon src={LockClosed} class="w-6 h-6 cursor-pointer" />
-			{/if}
-		</div>
-		{#if selected !== null}
-			<span class="px-2 opacity-50 cursor-default">|</span>
-		{/if}
-		{#if selected?.type === 'title'}
-			<div on:click|preventDefault={() => {}} on:touchend|preventDefault={() => {}}>
-				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div on:click|preventDefault={() => {}} on:touchend|preventDefault={() => {}}>
-				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
-			</div>
-		{/if}
-		{#if selected?.type === 'header'}
-			<div on:click|preventDefault={removeHeader} on:touchend|preventDefault={removeHeader}>
-				<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div
-				on:click|preventDefault={() => orderHeader(false)}
-				on:touchend|preventDefault={() => orderHeader(false)}
-			>
-				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div
-				on:click|preventDefault={() => orderHeader(true)}
-				on:touchend|preventDefault={() => orderHeader(true)}
-			>
-				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
-			</div>
-		{/if}
-		{#if selected?.type === 'group'}
-			<div on:click|preventDefault={removeGroup} on:touchend|preventDefault={removeGroup}>
-				<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div
-				on:click|preventDefault={() => orderGroup(false)}
-				on:touchend|preventDefault={() => orderGroup(false)}
-			>
-				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div
-				on:click|preventDefault={() => orderGroup(true)}
-				on:touchend|preventDefault={() => orderGroup(true)}
-			>
-				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
-			</div>
-		{/if}
-		{#if selected?.type === 'item'}
-			<div on:click|preventDefault={removeItem} on:touchend|preventDefault={removeItem}>
-				<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div on:click|preventDefault={outItem} on:touchend|preventDefault={outItem}>
-				<Icon src={MinusCircle} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div
-				on:click|preventDefault={() => orderItem(false)}
-				on:touchend|preventDefault={() => orderItem(false)}
-			>
-				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div
-				on:click|preventDefault={() => orderItem(true)}
-				on:touchend|preventDefault={() => orderItem(true)}
-			>
-				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
-			</div>
-		{/if}
-		{#if selected?.type === 'footer'}
-			<div on:click|preventDefault={removeFooter} on:touchend|preventDefault={removeFooter}>
-				<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div
-				on:click|preventDefault={() => orderFooter(false)}
-				on:touchend|preventDefault={() => orderFooter(false)}
-			>
-				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
-			</div>
-			<div
-				on:click|preventDefault={() => orderFooter(true)}
-				on:touchend|preventDefault={() => orderFooter(true)}
-			>
-				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
-			</div>
+	<div on:mousedown|preventDefault={save} on:touchstart|preventDefault={save}>
+		<Icon src={CloudArrowUp} class="w-6 h-6 cursor-pointer" />
+	</div>
+	<div on:mousedown|preventDefault={toggleEdit} on:touchstart|preventDefault={toggleEdit}>
+		{#if isGuest}
+			<Icon src={LockOpen} class="w-6 h-6 cursor-pointer" />
+		{:else}
+			<Icon src={LockClosed} class="w-6 h-6 cursor-pointer" />
 		{/if}
 	</div>
+	{#if selected !== null}
+		<span class="px-2 opacity-50 cursor-default">|</span>
+	{/if}
+	{#if selected?.type === 'title'}
+		<div on:mousedown|preventDefault={() => {}} on:touchstart|preventDefault={() => {}}>
+			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div on:mousedown|preventDefault={() => {}} on:touchstart|preventDefault={() => {}}>
+			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+		</div>
+	{/if}
+	{#if selected?.type === 'header'}
+		<div on:mousedown|preventDefault={removeHeader} on:touchstart|preventDefault={removeHeader}>
+			<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div
+			on:mousedown|preventDefault={() => orderHeader(false)}
+			on:touchstart|preventDefault={() => orderHeader(false)}
+		>
+			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div
+			on:mousedown|preventDefault={() => orderHeader(true)}
+			on:touchstart|preventDefault={() => orderHeader(true)}
+		>
+			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+		</div>
+	{/if}
+	{#if selected?.type === 'group'}
+		<div on:mousedown|preventDefault={removeGroup} on:touchstart|preventDefault={removeGroup}>
+			<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div
+			on:mousedown|preventDefault={() => orderGroup(false)}
+			on:touchstart|preventDefault={() => orderGroup(false)}
+		>
+			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div
+			on:mousedown|preventDefault={() => orderGroup(true)}
+			on:touchstart|preventDefault={() => orderGroup(true)}
+		>
+			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+		</div>
+	{/if}
+	{#if selected?.type === 'item'}
+		<div on:mousedown|preventDefault={removeItem} on:touchstart|preventDefault={removeItem}>
+			<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div on:mousedown|preventDefault={outItem} on:touchstart|preventDefault={outItem}>
+			<Icon src={MinusCircle} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div
+			on:mousedown|preventDefault={() => orderItem(false)}
+			on:touchstart|preventDefault={() => orderItem(false)}
+		>
+			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div
+			on:mousedown|preventDefault={() => orderItem(true)}
+			on:touchstart|preventDefault={() => orderItem(true)}
+		>
+			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+		</div>
+	{/if}
+	{#if selected?.type === 'footer'}
+		<div on:mousedown|preventDefault={removeFooter} on:touchstart|preventDefault={removeFooter}>
+			<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div
+			on:mousedown|preventDefault={() => orderFooter(false)}
+			on:touchstart|preventDefault={() => orderFooter(false)}
+		>
+			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+		</div>
+		<div
+			on:mousedown|preventDefault={() => orderFooter(true)}
+			on:touchstart|preventDefault={() => orderFooter(true)}
+		>
+			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+		</div>
+	{/if}
 </div>
