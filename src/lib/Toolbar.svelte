@@ -108,7 +108,7 @@
 </script>
 
 <div
-	class="_toolbar fixed z-50 flex w-full bottom-3 left-0 mx-auto justify-center p-2 bg-pink-400 text-white gap-1 rounded-xl"
+	class="_toolbar fixed z-50 flex bottom-3 left-1/2 -translate-x-1/2 mx-auto justify-center p-2 bg-pink-400 text-white gap-1 rounded-xl"
 >
 	<div on:mousedown|preventDefault={save} on:touchstart|preventDefault={save}>
 		<Icon src={CloudArrowUp} class="w-6 h-6 cursor-pointer" />
