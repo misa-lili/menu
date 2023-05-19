@@ -105,7 +105,7 @@
 </script>
 
 <div
-	class="_toolbar fixed z-50 flex w-full bottom-3 left-0 mx-auto justify-center pointer-events-none"
+	class="_toolbar absolute z-50 flex w-full bottom-3 left-0 mx-auto justify-center pointer-events-none"
 >
 	<div class="flex p-2 justify-center bg-pink-400 text-white gap-1 rounded-xl pointer-events-auto">
 		<div on:click|preventDefault={save} on:touchend|preventDefault={save}>
