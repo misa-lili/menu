@@ -71,6 +71,7 @@
 	 *
 	 */
 	const save = () => {
+		if (!confirm('현재 메뉴를 저장하시겠습니까?')) return;
 		dispatch('save');
 	};
 	const remove = (arr: any[], idx) => {
@@ -104,15 +105,13 @@
 </script>
 
 <div
-	class="_toolbar fixed z-50 flex w-full bottom-3 left-0 mx-auto justify-center"
-	on:mousedown|preventDefault
-	on:touchstart|preventDefault
+	class="_toolbar fixed z-50 flex w-full bottom-3 left-0 mx-auto justify-center pointer-events-none"
 >
-	<div class="flex p-2 justify-center bg-pink-400 text-white gap-1 rounded-xl">
-		<div on:click={save}>
+	<div class="flex p-2 justify-center bg-pink-400 text-white gap-1 rounded-xl pointer-events-auto">
+		<div on:click|preventDefault={save} on:touchend|preventDefault={save}>
 			<Icon src={CloudArrowUp} class="w-6 h-6 cursor-pointer" />
 		</div>
-		<div on:click={toggleEdit}>
+		<div on:click|preventDefault={toggleEdit} on:touchend|preventDefault={toggleEdit}>
 			{#if isGuest}
 				<Icon src={LockOpen} class="w-6 h-6 cursor-pointer" />
 			{:else}
@@ -123,57 +122,81 @@
 			<span class="px-2 opacity-50 cursor-default">|</span>
 		{/if}
 		{#if selected?.type === 'title'}
-			<div on:click={() => {}}>
+			<div on:click|preventDefault={() => {}} on:touchend|preventDefault={() => {}}>
 				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => {}}>
+			<div on:click|preventDefault={() => {}} on:touchend|preventDefault={() => {}}>
 				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
 			</div>
 		{/if}
 		{#if selected?.type === 'header'}
-			<div on:click={removeHeader}>
+			<div on:click|preventDefault={removeHeader} on:touchend|preventDefault={removeHeader}>
 				<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => orderHeader(false)}>
+			<div
+				on:click|preventDefault={() => orderHeader(false)}
+				on:touchend|preventDefault={() => orderHeader(false)}
+			>
 				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => orderHeader(true)}>
+			<div
+				on:click|preventDefault={() => orderHeader(true)}
+				on:touchend|preventDefault={() => orderHeader(true)}
+			>
 				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
 			</div>
 		{/if}
 		{#if selected?.type === 'group'}
-			<div on:click={removeGroup}>
+			<div on:click|preventDefault={removeGroup} on:touchend|preventDefault={removeGroup}>
 				<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => orderGroup(false)}>
+			<div
+				on:click|preventDefault={() => orderGroup(false)}
+				on:touchend|preventDefault={() => orderGroup(false)}
+			>
 				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => orderGroup(true)}>
+			<div
+				on:click|preventDefault={() => orderGroup(true)}
+				on:touchend|preventDefault={() => orderGroup(true)}
+			>
 				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
 			</div>
 		{/if}
 		{#if selected?.type === 'item'}
-			<div on:click={removeItem}>
+			<div on:click|preventDefault={removeItem} on:touchend|preventDefault={removeItem}>
 				<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => outItem()}>
+			<div on:click|preventDefault={outItem} on:touchend|preventDefault={outItem}>
 				<Icon src={MinusCircle} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => orderItem(false)}>
+			<div
+				on:click|preventDefault={() => orderItem(false)}
+				on:touchend|preventDefault={() => orderItem(false)}
+			>
 				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => orderItem(true)}>
+			<div
+				on:click|preventDefault={() => orderItem(true)}
+				on:touchend|preventDefault={() => orderItem(true)}
+			>
 				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
 			</div>
 		{/if}
 		{#if selected?.type === 'footer'}
-			<div on:click={removeFooter}>
+			<div on:click|preventDefault={removeFooter} on:touchend|preventDefault={removeFooter}>
 				<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => orderFooter(false)}>
+			<div
+				on:click|preventDefault={() => orderFooter(false)}
+				on:touchend|preventDefault={() => orderFooter(false)}
+			>
 				<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
 			</div>
-			<div on:click={() => orderFooter(true)}>
+			<div
+				on:click|preventDefault={() => orderFooter(true)}
+				on:touchend|preventDefault={() => orderFooter(true)}
+			>
 				<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
 			</div>
 		{/if}
