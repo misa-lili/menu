@@ -47,6 +47,7 @@
 
 	const select = (event, parameters: { type: string; gidx?: number; idx?: number; data: any }) => {
 		selected = parameters;
+		selected.target = event.target;
 	};
 
 	const unselect = () => {

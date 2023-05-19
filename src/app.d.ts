@@ -13,6 +13,7 @@ declare global {
 		gidx?: number;
 		idx: number;
 		data: any;
+		target: any;
 	};
 
 	type Title = { value: string };
