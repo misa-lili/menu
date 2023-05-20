@@ -2,29 +2,16 @@
 	/** @type {import('./$types').PageData} */
 	export let data: { body: Menu };
 
-	import {
-		Icon,
-		Trash,
-		ArrowUp,
-		ArrowDown,
-		PlusCircle,
-		CloudArrowUp,
-		UserGroup,
-		Cog6Tooth,
-		Bolt,
-		LockClosed,
-		LockOpen,
-		XMark,
-		MinusCircle
-	} from 'svelte-hero-icons';
-	import Plus from 'svelte-material-icons/Plus.svelte';
-	import FolderPlusOutline from 'svelte-material-icons/FolderPlusOutline.svelte';
+	import IconPlus from 'svelte-material-icons/Plus.svelte';
+	import IconFolderPlusOutline from 'svelte-material-icons/FolderPlusOutline.svelte';
+	import IconLightningBolt from 'svelte-material-icons/LightningBolt.svelte';
+	import IconWindowClose from 'svelte-material-icons/WindowClose.svelte';
 	import { onMount } from 'svelte';
 	import { error } from '@sveltejs/kit';
 	import { page } from '$app/stores';
 	import jwt_decode from 'jwt-decode';
 	import { goto } from '$app/navigation';
-	import Qr from '$lib/QR.svelte';
+	import QR from '$lib/QR.svelte';
 
 	import { flip } from 'svelte/animate';
 	import { fade } from 'svelte/transition';
@@ -275,7 +262,7 @@
 					isExpired = false;
 				}}
 			>
-				<Icon src={XMark} class="w-6 h-6" />
+				<IconWindowClose class="w-6 h-6" />
 			</div>
 		</div>
 		<p class="text-center">로그인이 만료되었습니다. 로그인해주세요.</p>
@@ -378,7 +365,7 @@
 				class:hidden={!isOwner}
 				on:click={addHeader}
 			>
-				<Plus class="w-6 h-6" />
+				<IconPlus class="w-6 h-6" />
 			</div>
 		</div>
 	</div>
@@ -504,7 +491,7 @@
 							addItem(group);
 						}}
 					>
-						<Plus class="w-6 h-6" />
+						<IconPlus class="w-6 h-6" />
 					</div>
 				</div>
 			</div>
@@ -515,7 +502,7 @@
 				class:hidden={!isOwner}
 				on:click={addGroup}
 			>
-				<FolderPlusOutline class="w-6 h-6" />
+				<IconFolderPlusOutline class="w-6 h-6" />
 			</div>
 		</div>
 	</div>
@@ -548,15 +535,15 @@
 				class:hidden={!isOwner}
 				on:click={addFooter}
 			>
-				<Plus class="w-6 h-6" />
+				<IconPlus class="w-6 h-6" />
 			</div>
 		</div>
 		<div class="flex justify-end">
-			<Qr url={`https://qqur.app/${$page.params.mid}`} />
+			<QR url={`https://qqur.app/${$page.params.mid}`} />
 		</div>
 		<div class="flex justify-end text-right">
 			<div class="flex cursor-pointer text-violet-500" on:click={() => goto('/')}>
-				<Icon src={Bolt} class="w-6 h-6" /> <span>BY 뀨알</span>
+				<IconLightningBolt class="w-6 h-6" /> <span>BY 뀨알</span>
 			</div>
 		</div>
 	</div>

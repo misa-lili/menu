@@ -1,16 +1,10 @@
 <script lang="ts">
-	import {
-		Icon,
-		Trash,
-		ArrowUp,
-		ArrowDown,
-		CloudArrowUp,
-		LockClosed,
-		LockOpen,
-		MinusCircle
-	} from 'svelte-hero-icons';
-	import Logout from 'svelte-material-icons/Logout.svelte';
-	import ContentSave from 'svelte-material-icons/ContentSave.svelte';
+	import IconMinusCircleOutline from 'svelte-material-icons/MinusCircleOutline.svelte';
+	import IconLogout from 'svelte-material-icons/Logout.svelte';
+	import IconContentSave from 'svelte-material-icons/ContentSave.svelte';
+	import IconTrashCanOutline from 'svelte-material-icons/TrashCanOutline.svelte';
+	import IconArrowUpThin from 'svelte-material-icons/ArrowUpThin.svelte';
+	import IconArrowDownThin from 'svelte-material-icons/ArrowDownThin.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -114,91 +108,91 @@
 	class="_toolbar fixed z-50 flex bottom-3 left-1/2 -translate-x-1/2 mx-auto justify-center p-2 bg-pink-400 text-white gap-1 rounded-xl"
 >
 	<div on:mousedown|preventDefault={save} on:touchstart|preventDefault={save}>
-		<ContentSave class="w-6 h-6 cursor-pointer" />
+		<IconContentSave class="w-6 h-6 cursor-pointer" />
 	</div>
 	<div on:mousedown|preventDefault={signOut} on:touchstart|preventDefault={signOut}>
-		<Logout class="w-6 h-6 cursor-pointer" />
+		<IconLogout class="w-6 h-6 cursor-pointer" />
 	</div>
 	{#if selected !== null}
 		<span class="px-2 opacity-50 cursor-default">|</span>
 	{/if}
 	{#if selected?.type === 'title'}
 		<div on:mousedown|preventDefault={() => {}} on:touchstart|preventDefault={() => {}}>
-			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+			<IconArrowUpThin class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div on:mousedown|preventDefault={() => {}} on:touchstart|preventDefault={() => {}}>
-			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+			<IconArrowDownThin class="w-6 h-6 cursor-pointer" />
 		</div>
 	{/if}
 	{#if selected?.type === 'header'}
 		<div on:mousedown|preventDefault={removeHeader} on:touchstart|preventDefault={removeHeader}>
-			<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
+			<IconTrashCanOutline class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div
 			on:mousedown|preventDefault={() => orderHeader(false)}
 			on:touchstart|preventDefault={() => orderHeader(false)}
 		>
-			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+			<IconArrowUpThin class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div
 			on:mousedown|preventDefault={() => orderHeader(true)}
 			on:touchstart|preventDefault={() => orderHeader(true)}
 		>
-			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+			<IconArrowDownThin class="w-6 h-6 cursor-pointer" />
 		</div>
 	{/if}
 	{#if selected?.type === 'group'}
 		<div on:mousedown|preventDefault={removeGroup} on:touchstart|preventDefault={removeGroup}>
-			<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
+			<IconTrashCanOutline class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div
 			on:mousedown|preventDefault={() => orderGroup(false)}
 			on:touchstart|preventDefault={() => orderGroup(false)}
 		>
-			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+			<IconArrowUpThin class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div
 			on:mousedown|preventDefault={() => orderGroup(true)}
 			on:touchstart|preventDefault={() => orderGroup(true)}
 		>
-			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+			<IconArrowDownThin class="w-6 h-6 cursor-pointer" />
 		</div>
 	{/if}
 	{#if selected?.type === 'item'}
 		<div on:mousedown|preventDefault={removeItem} on:touchstart|preventDefault={removeItem}>
-			<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
+			<IconTrashCanOutline class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div on:mousedown|preventDefault={outItem} on:touchstart|preventDefault={outItem}>
-			<Icon src={MinusCircle} class="w-6 h-6 cursor-pointer" />
+			<IconMinusCircleOutline class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div
 			on:mousedown|preventDefault={() => orderItem(false)}
 			on:touchstart|preventDefault={() => orderItem(false)}
 		>
-			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+			<IconArrowUpThin class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div
 			on:mousedown|preventDefault={() => orderItem(true)}
 			on:touchstart|preventDefault={() => orderItem(true)}
 		>
-			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+			<IconArrowDownThin class="w-6 h-6 cursor-pointer" />
 		</div>
 	{/if}
 	{#if selected?.type === 'footer'}
 		<div on:mousedown|preventDefault={removeFooter} on:touchstart|preventDefault={removeFooter}>
-			<Icon src={Trash} class="w-6 h-6 cursor-pointer" />
+			<IconTrashCanOutline class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div
 			on:mousedown|preventDefault={() => orderFooter(false)}
 			on:touchstart|preventDefault={() => orderFooter(false)}
 		>
-			<Icon src={ArrowUp} class="w-6 h-6 cursor-pointer" />
+			<IconArrowUpThin class="w-6 h-6 cursor-pointer" />
 		</div>
 		<div
 			on:mousedown|preventDefault={() => orderFooter(true)}
 			on:touchstart|preventDefault={() => orderFooter(true)}
 		>
-			<Icon src={ArrowDown} class="w-6 h-6 cursor-pointer" />
+			<IconArrowDownThin class="w-6 h-6 cursor-pointer" />
 		</div>
 	{/if}
 </div>
