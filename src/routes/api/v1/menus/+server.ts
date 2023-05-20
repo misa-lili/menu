@@ -2,6 +2,7 @@ import { workers_token, account_id, menus_namespace_id } from '$env/static/priva
 import { signToken, verifyToken } from '$lib/server/jwt.js';
 import { json } from '@sveltejs/kit';
 import type { JwtPayload } from 'jsonwebtoken';
+import type { ErrorPayload } from 'vite';
 
 const namespace_id = menus_namespace_id;
 
@@ -45,8 +46,8 @@ export async function PUT({ url, request }) {
 
 		if ((isValid as JwtPayload).mids.includes(key) === false)
 			throw new Error('Forbidden: no permission');
-	} catch (error) {
-		return json({ ok: false, status: 403 });
+	} catch (error: any) {
+		return json({ ok: false, status: 403, message: error.message });
 	}
 
 	let atoken = null;

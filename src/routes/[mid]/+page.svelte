@@ -51,7 +51,6 @@
 		relayout();
 	};
 
-	let isGuest: boolean = true;
 	let isOwner: boolean = false;
 	let isExpired: boolean = false;
 
@@ -101,9 +100,8 @@
 		const atoken = window.sessionStorage.getItem('atoken');
 		if (atoken && jwt_decode(atoken).mids.includes($page.params.mid)) {
 			isOwner = true;
-			toggleEdit(true);
 		} else {
-			toggleEdit(false);
+			isOwner = false;
 		}
 	});
 
@@ -120,18 +118,9 @@
 		await initMasonry();
 	};
 
-	const toggleEdit = async (value?: boolean) => {
-		if (value === true) {
-			isGuest = false;
-		} else if (value === false) {
-			isGuest = true;
-		} else {
-			isGuest = !isGuest;
-		}
-	};
-
 	const addHeader = () => {
 		menu.headers = [...menu.headers, { id: crypto.randomUUID(), value: '' }];
+		menu = menu;
 	};
 
 	const addGroup = () => {
@@ -263,7 +252,6 @@
 		window.sessionStorage.removeItem('atoken');
 		window.sessionStorage.removeItem('rtoken');
 		isExpired = false;
-		isGuest = true;
 		isOwner = false;
 	};
 </script>
@@ -343,8 +331,8 @@
 	<div class="_header_container flex flex-col">
 		<div
 			class="_title mb-6"
-			placeholder={isGuest ? '' : 'Title'}
-			contenteditable={!isGuest}
+			placeholder={!isOwner ? '' : 'Title'}
+			contenteditable={isOwner}
 			on:keydown={onKeyDown}
 			on:focus={(event) => select(event, { type: 'title', idx: 0, data: menu.title })}
 			class:ring={selected?.type === 'title'}
@@ -364,8 +352,8 @@
 				<div class="flex-1">
 					<div
 						class="_header"
-						placeholder={isGuest ? '' : 'Description'}
-						contenteditable={!isGuest}
+						placeholder={!isOwner ? '' : 'Description'}
+						contenteditable={isOwner}
 						on:keydown={onKeyDown}
 						on:focus={(event) => select(event, { type: 'header', idx, data: header })}
 						class:ring={selected?.type === 'header' && selected?.idx === idx}
@@ -385,7 +373,7 @@
 		<div class="flex">
 			<div
 				class="inline-block space-x-1 text-sm items-center text-violet-500 hover:text-violet-400 cursor-pointer"
-				class:hidden={isGuest}
+				class:hidden={!isOwner}
 				on:click={addHeader}
 			>
 				<Icon src={Plus} class="w-6 h-6" />
@@ -405,9 +393,9 @@
 				<div class="flex items-end">
 					<div
 						class="_group_name flex-1"
-						class:hidden={isGuest && group === ''}
-						placeholder={isGuest ? '' : '그룹 이름'}
-						contenteditable={!isGuest}
+						class:hidden={!isOwner && group === ''}
+						placeholder={!isOwner ? '' : '그룹 이름'}
+						contenteditable={isOwner}
 						on:keydown={onKeyDown}
 						on:focus={(event) => select(event, { type: 'group', idx: gidx, data: group })}
 						on:input={(event) => {
@@ -422,9 +410,9 @@
 					</div>
 					<div
 						class="_group_col font-mono text-right"
-						class:hidden={isGuest && !group.col}
-						placeholder={isGuest ? '' : '칸 설명'}
-						contenteditable={!isGuest}
+						class:hidden={!isOwner && !group.col}
+						placeholder={!isOwner ? '' : '칸 설명'}
+						contenteditable={isOwner}
 						on:keydown={onKeyDown}
 						on:focus={(event) => select(event, { type: 'group', idx: gidx, data: group })}
 						on:input={(event) => {
@@ -456,8 +444,8 @@
 									class="_item_name text-black"
 									class:text-opacity-30={item.out}
 									class:line-through={item.out}
-									placeholder={isGuest ? '' : '상품 이름'}
-									contenteditable={!isGuest}
+									placeholder={!isOwner ? '' : '상품 이름'}
+									contenteditable={isOwner}
 									on:keydown={onKeyDown}
 									on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
 									on:input={(event) => {
@@ -472,8 +460,8 @@
 								</div>
 								<div
 									class="_item_price font-mono text-right"
-									placeholder={isGuest ? '' : '가격'}
-									contenteditable={!isGuest}
+									placeholder={!isOwner ? '' : '가격'}
+									contenteditable={isOwner}
 									on:keydown={onKeyDown}
 									on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
 									on:input={(event) => {
@@ -489,8 +477,8 @@
 							</div>
 							<div
 								class="_description text-sm"
-								placeholder={isGuest ? '' : '상세 설명'}
-								contenteditable={!isGuest}
+								placeholder={!isOwner ? '' : '상세 설명'}
+								contenteditable={isOwner}
 								on:keydown={onKeyDown}
 								on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
 								on:input={(event) => {
@@ -509,7 +497,7 @@
 				<div class="flex">
 					<div
 						class="inline-block space-x-1 text-sm items-center cursor-pointer text-pink-500 hover:text-pink-400"
-						class:hidden={isGuest}
+						class:hidden={!isOwner}
 						on:click={() => {
 							addItem(group);
 						}}
@@ -522,7 +510,7 @@
 		<div class="_group m-card w-full sm:w-[calc(100%/2-30px)] flex flex-col">
 			<div
 				class="inline-block space-x-1 text-sm items-center cursor-pointer text-violet-500 hover:text-violet-400"
-				class:hidden={isGuest}
+				class:hidden={!isOwner}
 				on:click={addGroup}
 			>
 				<Icon src={FolderPlus} class="w-6 h-6" />
@@ -536,7 +524,7 @@
 				<div
 					class="_footer flex-1"
 					placeholder="Footer"
-					contenteditable={!isGuest}
+					contenteditable={isOwner}
 					on:keydown={onKeyDown}
 					on:focus={(event) => select(event, { type: 'footer', idx, data: footer })}
 					class:ring={selected?.type === 'footer' && selected?.idx === idx}
@@ -555,7 +543,7 @@
 		<div class="flex justify-end">
 			<div
 				class="inline-block text-sm items-center cursor-pointer text-violet-500 hover:text-violet-400"
-				class:hidden={isGuest}
+				class:hidden={!isOwner}
 				on:click={() => {
 					menu.footers = [...menu.footers, ''];
 				}}

@@ -112,12 +112,12 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				title: '',
+				title: { value: '' },
 				headers: [],
 				footers: [],
 				groups: []
 			})
-		});
+		}).catch((error) => alert(error.message));
 
 		// a, r토큰 저장
 		window.sessionStorage.setItem('atoken', result.body.atoken);
@@ -128,6 +128,13 @@
 
 		// goto /mid
 		goto(`/${mid}`);
+	};
+
+	const signOut = () => {
+		window.sessionStorage.removeItem('atoken');
+		window.sessionStorage.removeItem('rtoken');
+		isSiginedIn = false;
+		mids = [];
 	};
 </script>
 
