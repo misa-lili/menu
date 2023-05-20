@@ -4,7 +4,6 @@
 		Trash,
 		ArrowUp,
 		ArrowDown,
-		Plus,
 		CloudArrowUp,
 		LockClosed,
 		LockOpen,

@@ -105,11 +105,16 @@
 			})
 		}).then((r) => r.json());
 
+		// a, r토큰 저장
+		window.sessionStorage.setItem('atoken', result.body.atoken);
+		window.sessionStorage.setItem('rtoken', result.body.rtoken);
+
 		// menus에 put
 		await fetch(`/api/v1/menus?key=${mid}`, {
 			method: 'PUT',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${result.body.atoken}`
 			},
 			body: JSON.stringify({
 				title: { value: '' },
@@ -118,10 +123,6 @@
 				groups: []
 			})
 		}).catch((error) => alert(error.message));
-
-		// a, r토큰 저장
-		window.sessionStorage.setItem('atoken', result.body.atoken);
-		window.sessionStorage.setItem('rtoken', result.body.rtoken);
 
 		// 가입 완료
 		alert(`회원 가입 되었습니다.`);

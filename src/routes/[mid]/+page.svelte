@@ -8,8 +8,6 @@
 		ArrowUp,
 		ArrowDown,
 		PlusCircle,
-		Plus,
-		FolderPlus,
 		CloudArrowUp,
 		UserGroup,
 		Cog6Tooth,
@@ -19,6 +17,8 @@
 		XMark,
 		MinusCircle
 	} from 'svelte-hero-icons';
+	import Plus from 'svelte-material-icons/Plus.svelte';
+	import FolderPlusOutline from 'svelte-material-icons/FolderPlusOutline.svelte';
 	import { onMount } from 'svelte';
 	import { error } from '@sveltejs/kit';
 	import { page } from '$app/stores';
@@ -120,12 +120,12 @@
 
 	const addHeader = () => {
 		menu.headers = [...menu.headers, { id: crypto.randomUUID(), value: '' }];
-		menu = menu;
+		relayout();
 	};
 
 	const addGroup = () => {
 		menu.groups = [...menu.groups, { name: '', id: crypto.randomUUID(), items: [] }];
-		menu.groups = menu.groups;
+		relayout();
 	};
 
 	const addItem = (group) => {
@@ -140,10 +140,12 @@
 			}
 		];
 		menu.groups = menu.groups;
+		relayout();
 	};
 
 	const addFooter = () => {
 		menu.footers = [...menu.footers, { id: crypto.randomUUID(), value: '' }];
+		relayout();
 	};
 
 	const handleInputText = (e: InputEvent): string => {
@@ -352,7 +354,7 @@
 				<div class="flex-1">
 					<div
 						class="_header"
-						placeholder={!isOwner ? '' : 'Description'}
+						placeholder={!isOwner ? '' : '머릿말'}
 						contenteditable={isOwner}
 						on:keydown={onKeyDown}
 						on:focus={(event) => select(event, { type: 'header', idx, data: header })}
@@ -376,7 +378,7 @@
 				class:hidden={!isOwner}
 				on:click={addHeader}
 			>
-				<Icon src={Plus} class="w-6 h-6" />
+				<Plus class="w-6 h-6" />
 			</div>
 		</div>
 	</div>
@@ -502,7 +504,7 @@
 							addItem(group);
 						}}
 					>
-						<Icon src={Plus} class="w-6 h-6" />
+						<Plus class="w-6 h-6" />
 					</div>
 				</div>
 			</div>
@@ -513,7 +515,7 @@
 				class:hidden={!isOwner}
 				on:click={addGroup}
 			>
-				<Icon src={FolderPlus} class="w-6 h-6" />
+				<FolderPlusOutline class="w-6 h-6" />
 			</div>
 		</div>
 	</div>
@@ -523,7 +525,7 @@
 			<div class="flex">
 				<div
 					class="_footer flex-1"
-					placeholder="Footer"
+					placeholder={!isOwner ? '' : '바닥글'}
 					contenteditable={isOwner}
 					on:keydown={onKeyDown}
 					on:focus={(event) => select(event, { type: 'footer', idx, data: footer })}
@@ -544,11 +546,9 @@
 			<div
 				class="inline-block text-sm items-center cursor-pointer text-violet-500 hover:text-violet-400"
 				class:hidden={!isOwner}
-				on:click={() => {
-					menu.footers = [...menu.footers, ''];
-				}}
+				on:click={addFooter}
 			>
-				<Icon src={Plus} class="w-6 h-6" />
+				<Plus class="w-6 h-6" />
 			</div>
 		</div>
 		<div class="flex justify-end">
