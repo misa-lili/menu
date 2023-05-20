@@ -223,12 +223,17 @@
 			</div>
 		</div>
 	{:else}
-		<div class="text-center">
+		<div class="text-center space-y-3">
 			<div>로그인 되었습니다.</div>
 			{#each mids as mid (mid)}
-				<span class="text-blue-500 cursor-pointer" on:click={() => goto(`/${mid}`)}>{mid}</span>
-				메뉴 바로가기
+				<div>
+					<span class="text-blue-500 cursor-pointer" on:click={() => goto(`/${mid}`)}>{mid}</span>
+					메뉴 바로가기
+				</div>
 			{/each}
+			<div class="text-center font-extralight">
+				<a class="cursor-pointer text-blue-500 font-medium" on:click={signOut}>로그아웃</a>하기
+			</div>
 		</div>
 	{/if}
 	<hr />

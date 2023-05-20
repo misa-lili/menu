@@ -10,6 +10,8 @@
 		LockOpen,
 		MinusCircle
 	} from 'svelte-hero-icons';
+	import Logout from 'svelte-material-icons/Logout.svelte';
+	import ContentSave from 'svelte-material-icons/ContentSave.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -102,8 +104,10 @@
 
 		dispatch('relayout');
 	};
-	const toggleEdit = () => {
-		dispatch('toggleEdit');
+	const signOut = () => {
+		if (!confirm('로그아웃 하시겠습니까?')) return;
+
+		dispatch('signOut');
 	};
 </script>
 
@@ -111,14 +115,10 @@
 	class="_toolbar fixed z-50 flex bottom-3 left-1/2 -translate-x-1/2 mx-auto justify-center p-2 bg-pink-400 text-white gap-1 rounded-xl"
 >
 	<div on:mousedown|preventDefault={save} on:touchstart|preventDefault={save}>
-		<Icon src={CloudArrowUp} class="w-6 h-6 cursor-pointer" />
+		<ContentSave class="w-6 h-6 cursor-pointer" />
 	</div>
-	<div on:mousedown|preventDefault={toggleEdit} on:touchstart|preventDefault={toggleEdit}>
-		{#if isGuest}
-			<Icon src={LockOpen} class="w-6 h-6 cursor-pointer" />
-		{:else}
-			<Icon src={LockClosed} class="w-6 h-6 cursor-pointer" />
-		{/if}
+	<div on:mousedown|preventDefault={signOut} on:touchstart|preventDefault={signOut}>
+		<Logout class="w-6 h-6 cursor-pointer" />
 	</div>
 	{#if selected !== null}
 		<span class="px-2 opacity-50 cursor-default">|</span>

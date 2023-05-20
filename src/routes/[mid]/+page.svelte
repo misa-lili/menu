@@ -39,10 +39,6 @@
 		headers: []
 	};
 
-	// $: if (isMounted & menu) {
-	// 	relayout();
-	// }
-
 	let selected: Selected | null = null;
 
 	const select = (event, parameters: { type: string; gidx?: number; idx?: number; data: any }) => {
@@ -262,6 +258,14 @@
 			isExpired = false;
 		} else alert('회원 정보를 확인해 주세요');
 	};
+
+	const signOut = () => {
+		window.sessionStorage.removeItem('atoken');
+		window.sessionStorage.removeItem('rtoken');
+		isExpired = false;
+		isGuest = true;
+		isOwner = false;
+	};
 </script>
 
 <svelte:head>
@@ -269,16 +273,10 @@
 </svelte:head>
 
 {#if isOwner}
-	<Toolbar
-		bind:menu
-		bind:selected
-		on:relayout={relayout}
-		on:save={save}
-		on:toggleEdit={toggleEdit}
-	/>
+	<Toolbar bind:menu bind:selected on:relayout={relayout} on:save={save} on:signOut={signOut} />
 {/if}
 
-<dialog class="bg-white/50 fixed top-0 w-full h-full" open={isExpired}>
+<dialog class="bg-white/50 fixed z-50 top-0 w-full h-full" open={isExpired}>
 	<div class="bg-white border rounded-3xl flex flex-col space-y-6 px-3 pt-3 pb-12">
 		<div class="flex justify-end">
 			<div
@@ -328,6 +326,10 @@
 			value="로그인"
 			on:click={signInAndSave}
 		/>
+
+		<div class="text-center font-extralight">
+			대신 <a class="cursor-pointer text-blue-500 font-medium" on:click={signOut}>로그아웃</a>하기
+		</div>
 	</div>
 </dialog>
 
