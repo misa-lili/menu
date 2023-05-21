@@ -26,15 +26,19 @@
 
 	onMount(() => {
 		if (window) {
-			const atoken = window.sessionStorage.getItem('atoken');
-			const rtoken = window.sessionStorage.getItem('rtoken');
-			if (atoken || rtoken) {
-				const payload = jwt_decode(atoken || rtoken);
-				isSiginedIn = true;
-				mids = payload.mids;
-			}
+			checkTokens();
 		}
 	});
+
+	const checkTokens = () => {
+		const atoken = window.sessionStorage.getItem('atoken');
+		const rtoken = window.sessionStorage.getItem('rtoken');
+		if (atoken || rtoken) {
+			const payload = jwt_decode(atoken || rtoken);
+			isSiginedIn = true;
+			mids = payload.mids;
+		}
+	};
 
 	const toggleSignUp = () => {
 		isSignUp = !isSignUp;
@@ -46,7 +50,8 @@
 		if (result.status === 200) {
 			window.sessionStorage.setItem('atoken', result.body.atoken);
 			window.sessionStorage.setItem('rtoken', result.body.rtoken);
-			goto(`/${result.body.mids[0]}`);
+			// goto(`/${result.body.mids[0]}`);
+			checkTokens();
 		} else alert('회원 정보를 확인해 주세요');
 	};
 
