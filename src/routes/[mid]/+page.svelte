@@ -78,8 +78,6 @@
 			})
 		};
 
-		await initMasonry();
-
 		if (menu?.title.value && window && document) {
 			insertImage();
 		}
@@ -90,6 +88,8 @@
 		} else {
 			isOwner = false;
 		}
+
+		await relayout();
 	});
 
 	const initMasonry = async () => {
