@@ -3,10 +3,9 @@
 @tailwind utilities;
 
 html, body {
-	direction: ltr
+	margin: 0;
+	padding: 0;
 }
-
-
 
 /**
   Noto Sans KR
@@ -15,6 +14,12 @@ html, body {
 	font-family: Noto Sans KR;
 	font-weight: 100;
 	src: url(https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100&display=swap) format('woff');
+}
+
+@font-face {
+	font-family: Noto Sans KR;
+	font-weight: 200;
+	src: url(https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@200&display=swap) format('woff');
 }
 
 @font-face {

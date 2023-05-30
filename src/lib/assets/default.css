@@ -1,0 +1,167 @@
+/*
+  Select ring
+*/
+div {
+	@apply ring-pink-400 ring-offset-4;
+}
+div:focus {
+	@apply outline-none;
+}
+
+/*
+	Placeholder properties
+*/
+[placeholder]:empty::before {
+	content: attr(placeholder);
+	opacity: 0.3;
+}
+[placeholder]:empty:focus::before {
+	content: '';
+}
+
+/*
+	Icon
+*/
+._icon {
+	@apply w-6 h-6;
+}
+
+._icon_color_1 {
+	@apply text-violet-500 hover:text-violet-400;
+}
+
+._icon_color_2 {
+	@apply text-pink-500 hover:text-pink-400;
+}
+
+
+/*
+	Content
+*/
+body { 
+	@apply text-black text-opacity-90 bg-white;
+
+	._template { 
+		@apply 
+			container 
+			mx-auto 
+			flex flex-col 
+			space-y-4 sm:space-y-12
+			w-full  
+			px-6 sm:px-8 md:px-12
+			pt-12
+		;
+
+		._wrapper_title {
+			._title { 
+				@apply mb-6 font-black outline-none text-8xl leading-[4.8rem] overflow-visible caret-slate-500;
+			}
+		}
+
+		._wrapper_header {
+			._header { 
+				@apply text-lg;
+			}
+		}
+
+		._btn_header_plus { 
+			@apply 
+				_icon_color_1 
+				inline-block space-x-1 text-sm items-center 
+				cursor-pointer
+			;
+		}
+
+		._groups {
+			._group { 
+				@apply 
+					w-full sm:w-[calc(100%/2-60px)] 
+					flex flex-col 
+					space-y-6 
+					mb-12
+				;
+
+				._group_properties { 
+					@apply flex items-end;
+
+					._group_name { 
+						@apply flex-1 font-medium text-3xl font-mono; }
+
+					._group_col { 
+						@apply font-mono text-right; }
+				}
+
+				._items { 
+					@apply flex flex-col space-y-6 ;
+					._item_wrapper { 
+						@apply flex; 
+
+						._item {
+							@apply flex-grow space-y-1;
+
+							._item_header {
+								@apply flex;
+
+								._item_name {
+									@apply basis-auto flex-grow text-xl decoration-slice;
+								}
+								._item_price {
+									@apply font-mono text-right font-extralight;
+								}
+							}
+							._item_description {
+								@apply text-sm font-extralight;
+							}
+						}
+					}
+
+				}
+
+				._btn_item_plus { 
+					@apply 
+						_icon_color_2
+						inline-block space-x-1 text-sm items-center cursor-pointer 
+					;
+				}
+			}
+
+			._btn_group_plus {
+				@apply 
+					_icon_color_1
+					inline-block space-x-1 text-sm items-center cursor-pointer
+				;
+			}
+		}
+
+		._footer_container {
+			@apply flex flex-col;
+
+			._footer_wrapper {
+				@apply flex flex-col; 
+
+				._footer {
+					@apply text-right;
+				}
+			}
+
+			._btn_footer_plus {
+				@apply _icon_color_1 self-end inline-block text-sm items-center cursor-pointer;
+			}
+
+			._qr {
+				@apply flex justify-end;
+			}
+
+			._qqur {
+				@apply flex justify-end cursor-pointer text-violet-500;
+			}
+		}
+	}
+}
+
+
+
+
+
+
+

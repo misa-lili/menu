@@ -7,7 +7,7 @@
 	let imageURL;
 
 	onMount(async () => {
-		const canvas = await QRCode.toCanvas(url);
+		const canvas = await QRCode.toCanvas(url, { color: { light: '#0000' } });
 		imageURL = canvas.toDataURL();
 	});
 </script>

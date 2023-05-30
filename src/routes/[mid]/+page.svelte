@@ -17,6 +17,8 @@
 	import { fade } from 'svelte/transition';
 	import Toolbar from '$lib/Toolbar.svelte';
 
+	import '$lib/assets/default.css';
+
 	let isMounted: boolean = false;
 
 	let menu: Menu = {
@@ -94,9 +96,9 @@
 
 	const initMasonry = async () => {
 		Masonry = (await import('masonry-layout')).default;
-		masonry = new Masonry('.m-container', {
-			itemSelector: '.m-card',
-			gutter: 60
+		masonry = new Masonry('._groups', {
+			itemSelector: '._group',
+			gutter: 120
 		});
 	};
 
@@ -136,6 +138,8 @@
 	};
 
 	const handleInputText = (e: InputEvent): string => {
+		// TODO: check 로그인 만료
+		// alert('로그인이 만료되었습니다.');
 		return e.target.innerText;
 	};
 
@@ -156,9 +160,11 @@
 	const insertImage = () => {
 		const target = document.querySelector('._title');
 		if (/^https?:\/\//.test(menu.title.value) && target) {
-			target.innerHTML = `<img src="${menu.title.value.trim()}">`;
+			menu.title.value = `<img src="${menu.title.value.trim()}">`;
 		}
 		// https://i.imgur.com/ji9VuwA.jpeg
+		// https://imgur.com/bYjpMis
+		// https://imgur.com/PghbasK.png
 	};
 
 	let isSaving = false;
@@ -262,7 +268,7 @@
 					isExpired = false;
 				}}
 			>
-				<IconWindowClose class="w-6 h-6" />
+				<IconWindowClose class="_icon" />
 			</div>
 		</div>
 		<p class="text-center">로그인이 만료되었습니다. 로그인해주세요.</p>
@@ -310,21 +316,15 @@
 	</div>
 </dialog>
 
-<div
-	class="
-		_template flex flex-col space-y-4
-		m-6 sm:m-8 md:m-12
-		sm:space-y-12
-	"
->
-	<div class="_header_container flex flex-col">
+<div class="_template">
+	<div class="_wrapper_title">
 		<div
-			class="_title mb-6"
+			class="_title"
+			class:ring={selected?.type === 'title'}
 			placeholder={!isOwner ? '' : 'Title'}
 			contenteditable={isOwner}
 			on:keydown={onKeyDown}
 			on:focus={(event) => select(event, { type: 'title', idx: 0, data: menu.title })}
-			class:ring={selected?.type === 'title'}
 			on:input={(event) => {
 				menu.title.value = event.target.innerText;
 			}}
@@ -334,54 +334,46 @@
 				unselect();
 			}}
 		>
-			{menu.title.value}
+			{@html menu.title.value}
 		</div>
+	</div>
+	<div class="_wrapper_header">
 		{#each menu.headers as header, idx (header.id)}
-			<div class="flex">
-				<div class="flex-1">
-					<div
-						class="_header"
-						placeholder={!isOwner ? '' : '머릿말'}
-						contenteditable={isOwner}
-						on:keydown={onKeyDown}
-						on:focus={(event) => select(event, { type: 'header', idx, data: header })}
-						class:ring={selected?.type === 'header' && selected?.idx === idx}
-						on:input={(event) => {
-							header.value = handleInputText(event);
-						}}
-						on:blur={(event) => {
-							placehold(event);
-							unselect();
-						}}
-					>
-						{header.value}
-					</div>
-				</div>
+			<div
+				class="_header"
+				class:ring={selected?.type === 'header' && selected?.idx === idx}
+				placeholder={!isOwner ? '' : '머릿말'}
+				contenteditable={isOwner}
+				on:keydown={onKeyDown}
+				on:focus={(event) => select(event, { type: 'header', idx, data: header })}
+				on:input={(event) => {
+					header.value = handleInputText(event);
+				}}
+				on:blur={(event) => {
+					placehold(event);
+					unselect();
+				}}
+			>
+				{header.value}
 			</div>
 		{/each}
-		<div class="flex">
-			<div
-				class="inline-block space-x-1 text-sm items-center text-violet-500 hover:text-violet-400 cursor-pointer"
-				class:hidden={!isOwner}
-				on:click={addHeader}
-			>
-				<IconPlus class="w-6 h-6" />
-			</div>
+		<div class="_btn_header_plus" class:hidden={!isOwner} on:click={addHeader}>
+			<IconPlus class="_icon" />
 		</div>
 	</div>
 
-	<div class="_groups m-container">
+	<div class="_groups">
 		{#each menu.groups as group, gidx (group.id)}
 			<div
-				class="_group m-card w-full sm:w-[calc(100%/2-30px)] flex flex-col"
+				class="_group"
 				in:fade|local={{ delay: 100, duration: 200 }}
 				out:fade|local={{ delay: 0, duration: 200 }}
 				animate:flip={200}
 				class:ring={selected?.type === 'group' && selected?.idx === gidx}
 			>
-				<div class="flex items-end">
+				<div class="_group_properties">
 					<div
-						class="_group_name flex-1"
+						class="_group_name"
 						class:hidden={!isOwner && group === ''}
 						placeholder={!isOwner ? '' : '그룹 이름'}
 						contenteditable={isOwner}
@@ -398,7 +390,7 @@
 						{group.name}
 					</div>
 					<div
-						class="_group_col font-mono text-right"
+						class="_group_col"
 						class:hidden={!isOwner && !group.col}
 						placeholder={!isOwner ? '' : '칸 설명'}
 						contenteditable={isOwner}
@@ -415,108 +407,106 @@
 						{group.col ? group.col : ''}
 					</div>
 				</div>
-				{#each group.items as item, iidx (item.id)}
-					<div
-						class="flex"
-						in:fade|local={{ delay: 100, duration: 200 }}
-						out:fade|local={{ delay: 0, duration: 200 }}
-						animate:flip={200}
-					>
+				<div class="_items">
+					{#each group.items as item, iidx (item.id)}
 						<div
-							class="_item flex-grow flex flex-col"
-							class:ring={selected?.type === 'item' &&
-								selected?.gidx === gidx &&
-								selected?.idx === iidx}
+							class="_item_wrapper"
+							in:fade|local={{ delay: 100, duration: 200 }}
+							out:fade|local={{ delay: 0, duration: 200 }}
+							animate:flip={200}
 						>
-							<div class="flex">
-								<div
-									class="_item_name text-black"
-									class:text-opacity-30={item.out}
-									class:line-through={item.out}
-									placeholder={!isOwner ? '' : '상품 이름'}
-									contenteditable={isOwner}
-									on:keydown={onKeyDown}
-									on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
-									on:input={(event) => {
-										menu.groups[gidx].items[iidx].name = handleInputText(event);
-									}}
-									on:blur={(event) => {
-										placehold(event);
-										unselect();
-									}}
-								>
-									{item.name}
-								</div>
-								<div
-									class="_item_price font-mono text-right"
-									placeholder={!isOwner ? '' : '가격'}
-									contenteditable={isOwner}
-									on:keydown={onKeyDown}
-									on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
-									on:input={(event) => {
-										menu.groups[gidx].items[iidx].price = handleInputText(event);
-									}}
-									on:blur={(event) => {
-										placehold(event);
-										unselect();
-									}}
-								>
-									{item.price}
-								</div>
-							</div>
 							<div
-								class="_description text-sm"
-								placeholder={!isOwner ? '' : '상세 설명'}
-								contenteditable={isOwner}
-								on:keydown={onKeyDown}
-								on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
-								on:input={(event) => {
-									menu.groups[gidx].items[iidx].description = handleInputText(event);
-								}}
-								on:blur={(event) => {
-									placehold(event);
-									unselect();
-								}}
+								class="_item"
+								class:ring={selected?.type === 'item' &&
+									selected?.gidx === gidx &&
+									selected?.idx === iidx}
 							>
-								{item.description}
+								<div class="_item_header">
+									<div
+										class="_item_name"
+										class:opacity-30={item.out}
+										class:line-through={item.out}
+										placeholder={!isOwner ? '' : '상품 이름'}
+										contenteditable={isOwner}
+										on:keydown={onKeyDown}
+										on:focus={(event) =>
+											select(event, { type: 'item', gidx, idx: iidx, data: item })}
+										on:input={(event) => {
+											menu.groups[gidx].items[iidx].name = handleInputText(event);
+										}}
+										on:blur={(event) => {
+											placehold(event);
+											unselect();
+										}}
+									>
+										{item.name}
+									</div>
+									<div
+										class="_item_price"
+										placeholder={!isOwner ? '' : '가격'}
+										contenteditable={isOwner}
+										on:keydown={onKeyDown}
+										on:focus={(event) =>
+											select(event, { type: 'item', gidx, idx: iidx, data: item })}
+										on:input={(event) => {
+											menu.groups[gidx].items[iidx].price = handleInputText(event);
+										}}
+										on:blur={(event) => {
+											placehold(event);
+											unselect();
+										}}
+									>
+										{item.price}
+									</div>
+								</div>
+								<div
+									class="_item_description"
+									placeholder={!isOwner ? '' : '상세 설명'}
+									contenteditable={isOwner}
+									on:keydown={onKeyDown}
+									on:focus={(event) => select(event, { type: 'item', gidx, idx: iidx, data: item })}
+									on:input={(event) => {
+										menu.groups[gidx].items[iidx].description = handleInputText(event);
+									}}
+									on:blur={(event) => {
+										placehold(event);
+										unselect();
+									}}
+								>
+									{item.description}
+								</div>
 							</div>
 						</div>
-					</div>
-				{/each}
-				<div class="flex">
-					<div
-						class="inline-block space-x-1 text-sm items-center cursor-pointer text-pink-500 hover:text-pink-400"
-						class:hidden={!isOwner}
-						on:click={() => {
-							addItem(group);
-						}}
-					>
-						<IconPlus class="w-6 h-6" />
-					</div>
+					{/each}
+				</div>
+				<div
+					class="_btn_item_plus"
+					class:hidden={!isOwner}
+					on:click={() => {
+						addItem(group);
+					}}
+				>
+					<IconPlus class="_icon" />
 				</div>
 			</div>
 		{/each}
-		<div class="_group m-card w-full sm:w-[calc(100%/2-30px)] flex flex-col">
-			<div
-				class="inline-block space-x-1 text-sm items-center cursor-pointer text-violet-500 hover:text-violet-400"
-				class:hidden={!isOwner}
-				on:click={addGroup}
-			>
-				<IconFolderPlusOutline class="w-6 h-6" />
+		<div class="_group">
+			<div class="_btn_group_plus" class:hidden={!isOwner} on:click={addGroup}>
+				<IconFolderPlusOutline class="_icon" />
 			</div>
 		</div>
 	</div>
 
-	<div class="_footer_container flex flex-col">
-		{#each menu.footers as footer, idx (footer.id)}
-			<div class="flex">
+	<div class="_footer_container">
+		<div class="_footer_wrapper">
+			{#each menu.footers as footer, idx (footer.id)}
 				<div
-					class="_footer flex-1"
+					class="_footer"
+					class:ring={selected?.type === 'footer' && selected?.idx === idx}
 					placeholder={!isOwner ? '' : '바닥글'}
 					contenteditable={isOwner}
 					on:keydown={onKeyDown}
 					on:focus={(event) => select(event, { type: 'footer', idx, data: footer })}
-					class:ring={selected?.type === 'footer' && selected?.idx === idx}
 					on:input={(event) => {
 						footer.value = handleInputText(event);
 					}}
@@ -527,102 +517,16 @@
 				>
 					{footer.value}
 				</div>
-			</div>
-		{/each}
-		<div class="flex justify-end">
-			<div
-				class="inline-block text-sm items-center cursor-pointer text-violet-500 hover:text-violet-400"
-				class:hidden={!isOwner}
-				on:click={addFooter}
-			>
-				<IconPlus class="w-6 h-6" />
-			</div>
+			{/each}
 		</div>
-		<div class="flex justify-end">
+		<div class="_btn_footer_plus" class:hidden={!isOwner} on:click={addFooter}>
+			<IconPlus class="_icon" />
+		</div>
+		<div class="_qr">
 			<QR url={`https://qqur.app/${$page.params.mid}`} />
 		</div>
-		<div class="flex justify-end text-right">
-			<div class="flex cursor-pointer text-violet-500" on:click={() => goto('/')}>
-				<IconLightningBolt class="w-6 h-6" /> <span>BY 뀨알</span>
-			</div>
+		<div class="_qqur" on:click={() => goto('/')}>
+			<IconLightningBolt class="_icon" /> <span>BY 뀨알</span>
 		</div>
 	</div>
 </div>
-
-<style lang="postcss" global>
-	/* div {
-		@apply border border-slate-500 p-2;
-	} */
-	div {
-		@apply ring-pink-400 ring-offset-4;
-	}
-	div:focus {
-		@apply outline-none;
-	}
-
-	._xud {
-		@apply text-violet-500 hidden;
-	}
-
-	._xud > div {
-		@apply hover:text-violet-400 cursor-pointer;
-	}
-
-	._xud__pink {
-		@apply text-pink-500 hidden;
-	}
-	._xud__pink > div {
-		@apply hover:text-pink-400 cursor-pointer;
-	}
-
-	._title {
-		@apply font-black outline-none text-8xl leading-[4.8rem] overflow-visible caret-slate-500;
-	}
-
-	[placeholder]:empty::before {
-		content: attr(placeholder);
-		color: #bbb;
-	}
-
-	[placeholder]:empty:focus::before {
-		content: '';
-	}
-
-	._header {
-		@apply text-lg;
-	}
-
-	._groups {
-	}
-
-	._group {
-		@apply space-y-6 mb-12;
-	}
-
-	._group_name {
-		@apply font-medium text-3xl font-mono;
-	}
-
-	._item {
-		@apply space-y-1;
-	}
-
-	._item_name {
-		@apply basis-auto flex-grow text-xl decoration-slice;
-	}
-
-	._item_price {
-		@apply font-extralight;
-	}
-
-	._description {
-		@apply font-extralight;
-	}
-
-	._footer_container {
-	}
-
-	._footer {
-		@apply text-right;
-	}
-</style>
