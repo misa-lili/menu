@@ -49,7 +49,7 @@ body {
 			space-y-4 sm:space-y-12
 			w-full  
 			px-6 sm:px-8 md:px-12
-			pt-12
+			py-12
 		;
 
 		._wrapper_title {
@@ -67,7 +67,7 @@ body {
 		._btn_header_plus { 
 			@apply 
 				_icon_color_1 
-				inline-block space-x-1 text-sm items-center 
+				space-x-1 text-sm items-center 
 				cursor-pointer
 			;
 		}
@@ -120,7 +120,7 @@ body {
 				._btn_item_plus { 
 					@apply 
 						_icon_color_2
-						inline-block space-x-1 text-sm items-center cursor-pointer 
+						space-x-1 text-sm items-center cursor-pointer 
 					;
 				}
 			}
@@ -128,7 +128,7 @@ body {
 			._btn_group_plus {
 				@apply 
 					_icon_color_1
-					inline-block space-x-1 text-sm items-center cursor-pointer
+					space-x-1 text-sm items-center cursor-pointer
 				;
 			}
 		}
@@ -145,7 +145,7 @@ body {
 			}
 
 			._btn_footer_plus {
-				@apply _icon_color_1 self-end inline-block text-sm items-center cursor-pointer;
+				@apply _icon_color_1 self-end text-sm items-center cursor-pointer;
 			}
 
 			._qr {
