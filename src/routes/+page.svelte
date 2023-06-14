@@ -149,9 +149,8 @@
 </svelte:head>
 
 <div class="py-9 px-6 space-y-9">
-	<div class="text-center text-6xl font-bold font-mono">
-		QQUR<span class="text-2xl">(BETA)</span>
-	</div>
+	<div class="text-center text-6xl font-bold font-mono">QQUR</div>
+	<div class="text-center text-2xl">Beta version</div>
 	<hr />
 	{#if isSiginedIn === false}
 		<div class="flex flex-col space-y-6">

@@ -5,6 +5,8 @@
 	import IconTrashCanOutline from 'svelte-material-icons/TrashCanOutline.svelte';
 	import IconArrowUpThin from 'svelte-material-icons/ArrowUpThin.svelte';
 	import IconArrowDownThin from 'svelte-material-icons/ArrowDownThin.svelte';
+	import IconCog from 'svelte-material-icons/Cog.svelte';
+	import Modal from '$lib/components/Modal.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
@@ -112,6 +114,9 @@
 	</div>
 	<div on:mousedown|preventDefault={signOut} on:touchstart|preventDefault={signOut}>
 		<IconLogout class="w-6 h-6 cursor-pointer" />
+	</div>
+	<div>
+		<IconCog class="w-6 h-6 cursor-pointer" />
 	</div>
 	{#if selected !== null}
 		<span class="px-2 opacity-50 cursor-default">|</span>

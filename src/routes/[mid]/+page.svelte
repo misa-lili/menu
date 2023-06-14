@@ -91,6 +91,22 @@
 			isOwner = false;
 		}
 
+		if (menu.options?.styleSheet) {
+			// console.log(menu.options.styleSheet);
+			// document.head.innerHTML += menu.options.styleSheet;
+
+			var css = menu.options.styleSheet;
+			var style = document.createElement('style');
+
+			if (style.styleSheet) {
+				style.styleSheet.cssText = css; // 이 코드는 IE를 지원합니다
+			} else {
+				style.appendChild(document.createTextNode(css));
+			}
+
+			document.head.appendChild(style);
+		}
+
 		await relayout();
 	});
 

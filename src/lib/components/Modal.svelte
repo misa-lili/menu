@@ -25,13 +25,7 @@
 </script>
 
 {#if visible}
-	<div class="modal" style="left: {x}px; top: {y}px;" on:mousedown={handleMouseDown}>
+	<div class="fixed border z-50" style="left: {x}px; top: {y}px;" on:mousedown={handleMouseDown}>
 		<slot />
 	</div>
 {/if}
-
-<style>
-	.modal {
-		position: absolute;
-	}
-</style>
