@@ -14,20 +14,8 @@ export async function GET({ url }) {
 	 */
 	const key = url.searchParams.get('key');
 
-	// Get menu
 	if (key) {
-		// const body = await fetch(
-		// 	`https://api.cloudflare.com/client/v4/accounts/${account_id}/storage/kv/namespaces/${namespace_id}/values/${key}`,
-		// 	{
-		// 		method: 'GET',
-		// 		headers: {
-		// 			'Content-Type': 'application/json',
-		// 			Authorization: `Bearer ${workers_token}`
-		// 		}
-		// 	}
-		// ).then((r) => r.json());
-
-		// https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/dynamodb-example-table-read-write.html
+		// Get menu from DynamoDB
 		const client = new DynamoDBClient({ region: 'ap-northeast-2' });
 		const command = new GetItemCommand({
 			TableName: 'menu',
@@ -36,12 +24,10 @@ export async function GET({ url }) {
 			}
 		});
 		const response = await client.send(command);
+		const result = response.Item?.value.S;
 
-		try {
-			return json({ ok: true, status: 200, body: JSON.parse(response.Item?.value.S || '{}') });
-		} catch (error: any) {
-			return json({ ok: false, status: 404, message: error.message });
-		}
+		if (result === undefined) return json({ ok: false, status: 404 });
+		else return json({ ok: true, status: 200, body: JSON.parse(result) });
 	}
 }
 
@@ -72,20 +58,6 @@ export async function PUT({ url, request }) {
 	if (payload.sub === 'r') {
 		atoken = signToken({ sub: 'a', uid: payload.uid, mids: payload.mids });
 	}
-
-	// PUT menu
-	// await fetch(
-	// 	`https://api.cloudflare.com/client/v4/accounts/${account_id}/storage/kv/namespaces/${namespace_id}/values/${key}`,
-	// 	{
-	// 		method: 'PUT',
-	// 		headers: {
-	// 			// 'Content-Type': 'multipart/form-data; boundary=---011000010111000001101001',
-	// 			'Content-Type': 'application/json',
-	// 			Authorization: `Bearer ${workers_token}`
-	// 		},
-	// 		body
-	// 	}
-	// );
 
 	const client = new DynamoDBClient({ region: 'ap-northeast-2' });
 	const command = new PutItemCommand({
