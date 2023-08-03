@@ -91,7 +91,7 @@
 
 		// mid 존재하는지 확인
 		const menu = await fetch(`/api/v1/menus?key=${mid}`).then((r) => r.json());
-		if (menu.ok) {
+		if (menu.status === 200) {
 			isMidError = true;
 			return alert(`해당 메뉴 아이디는 이미 존재합니다.`);
 		}
