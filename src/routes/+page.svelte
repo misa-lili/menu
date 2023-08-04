@@ -3,7 +3,6 @@
 	import { fade, slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { goto } from '$app/navigation';
-	import bcrypt from 'bcryptjs';
 	import { onMount } from 'svelte';
 	import { each } from 'svelte/internal';
 

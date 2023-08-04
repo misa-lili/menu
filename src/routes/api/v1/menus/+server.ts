@@ -1,17 +1,14 @@
-import { workers_token, account_id, menus_namespace_id } from '$env/static/private';
 import { signToken, verifyToken } from '$lib/server/jwt.js';
 import { json } from '@sveltejs/kit';
 import type { JwtPayload } from 'jsonwebtoken';
-
 import { DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 
-const namespace_id = menus_namespace_id;
-
+/**
+ * GET /api/v1/menus?key
+ * 특정 메뉴를 가져옵니다.
+ */
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url }) {
-	/**
-	 * 특정 메뉴를 가져옵니다.
-	 */
 	const key = url.searchParams.get('key');
 
 	if (key) {
@@ -31,10 +28,13 @@ export async function GET({ url }) {
 	}
 }
 
+/**
+ * PUT /api/v1/menus?key
+ * json body { menu: Menu }
+ * 특정 메뉴를 업서트 합니다.
+ */
+/** @type {import('./$types').RequestHandler} */
 export async function PUT({ url, request }) {
-	/**
-	 * 특정 메뉴를 업서트 합니다.
-	 */
 	const key = url.searchParams.get('key');
 	const body = JSON.stringify(await request.json());
 
