@@ -275,62 +275,64 @@
 	<Toolbar bind:menu bind:selected on:relayout={relayout} on:save={save} on:signOut={signOut} />
 {/if}
 
-<dialog class="bg-white/50 fixed z-50 top-0 w-full h-full" open={isExpired}>
-	<div class="bg-white border rounded-3xl flex flex-col space-y-6 px-3 pt-3 pb-12">
-		<div class="flex justify-end">
-			<div
-				class="cursor-pointer"
-				on:click={() => {
-					isExpired = false;
+{#if isExpired}
+	<div class="bg-white/50 fixed z-50 top-0 w-full h-full">
+		<div class="bg-white border rounded-3xl flex flex-col space-y-6 px-3 pt-3 pb-12">
+			<div class="flex justify-end">
+				<div
+					class="cursor-pointer"
+					on:click={() => {
+						isExpired = false;
+					}}
+				>
+					<IconWindowClose class="_icon" />
+				</div>
+			</div>
+			<p class="text-center">로그인이 만료되었습니다. 로그인해주세요.</p>
+			<input
+				type="email"
+				placeholder="이메일"
+				class="font-extralight bg-stone-100 rounded-full p-3 px-5 border shadow-inner"
+				class:border-red-400={isEmailError}
+				class:text-red-400={isEmailError}
+				bind:value={email}
+				on:focus={() => {
+					if (isEmailError) {
+						email = '';
+						isEmailError = false;
+					}
 				}}
-			>
-				<IconWindowClose class="_icon" />
+			/>
+			<input
+				type="password"
+				placeholder="암호"
+				class="font-extralight bg-stone-100 rounded-full p-3 px-5 border shadow-inner"
+				class:border-red-400={isPasswordError}
+				class:text-red-400={isPasswordError}
+				bind:value={password}
+				on:focus={() => {
+					if (isPasswordError) {
+						password = '';
+						password2 = '';
+						isPasswordError = false;
+						isPassword2Error = false;
+					}
+				}}
+			/>
+
+			<input
+				type="button"
+				class="font-extralight h-12 rounded-full bg-black text-white px-3 cursor-pointer"
+				value="로그인"
+				on:click={signInAndSave}
+			/>
+
+			<div class="text-center font-extralight">
+				대신 <a class="cursor-pointer text-blue-500 font-medium" on:click={signOut}>로그아웃</a>하기
 			</div>
 		</div>
-		<p class="text-center">로그인이 만료되었습니다. 로그인해주세요.</p>
-		<input
-			type="email"
-			placeholder="이메일"
-			class="font-extralight bg-stone-100 rounded-full p-3 px-5 border shadow-inner"
-			class:border-red-400={isEmailError}
-			class:text-red-400={isEmailError}
-			bind:value={email}
-			on:focus={() => {
-				if (isEmailError) {
-					email = '';
-					isEmailError = false;
-				}
-			}}
-		/>
-		<input
-			type="password"
-			placeholder="암호"
-			class="font-extralight bg-stone-100 rounded-full p-3 px-5 border shadow-inner"
-			class:border-red-400={isPasswordError}
-			class:text-red-400={isPasswordError}
-			bind:value={password}
-			on:focus={() => {
-				if (isPasswordError) {
-					password = '';
-					password2 = '';
-					isPasswordError = false;
-					isPassword2Error = false;
-				}
-			}}
-		/>
-
-		<input
-			type="button"
-			class="font-extralight h-12 rounded-full bg-black text-white px-3 cursor-pointer"
-			value="로그인"
-			on:click={signInAndSave}
-		/>
-
-		<div class="text-center font-extralight">
-			대신 <a class="cursor-pointer text-blue-500 font-medium" on:click={signOut}>로그아웃</a>하기
-		</div>
 	</div>
-</dialog>
+{/if}
 
 <div class="_template">
 	<div class="_wrapper_title">
