@@ -18,6 +18,7 @@
 	import Toolbar from '$lib/Toolbar.svelte';
 
 	import '$lib/assets/default.css';
+	import Search from '$lib/components/Search.svelte';
 
 	let isMounted: boolean = false;
 
@@ -335,6 +336,8 @@
 {/if}
 
 <div class="_template">
+	<Search {menu} />
+
 	<div class="_wrapper_title">
 		<div
 			class="_title"
